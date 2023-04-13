@@ -1,0 +1,65 @@
+{
+  "name": "hospital-network",
+  "version": "1.0.0",
+  "client": {
+    "tlsEnable": true,
+    "adminCredential": {
+      "id": "admin",
+      "password": "123456"
+    },
+    "enableAuthentication": true,
+    "organization": "HospitalMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        },
+        "orderer": "300"
+      }
+    }
+  },
+  "channels": {
+    "appchannel": {
+      "peers": {
+        "peer0.hospital.com": {},
+        "peer1.hospital.com": {}
+      },
+      "connection": {
+        "timeout": {
+          "endorser": "6000",
+          "eventHub": "6000",
+          "eventReg": "6000"
+        }
+      }
+    }
+  },
+  "organizations": {
+    "HospitalMSP": {
+      "mspid": "HospitalMSP",
+      "adminPrivateKey": {
+        "path": "/tmp/crypto/peerOrganizations/hospital.com/users/Admin@hospital.com/msp/keystore/priv_sk"
+      },
+      "peers": [
+        "peer0.hospital.com",
+        "peer1.hospital.com"
+      ],
+      "signedCert": {
+        "path": "/tmp/crypto/peerOrganizations/hospital.com/users/Admin@hospital.com/msp/signcerts/Admin@hospital.com-cert.pem"
+      }
+    }
+  },
+  "peers": {
+    "peer0.hospital.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/hospital.com/peers/peer0.hospital.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer0.hospital.com:7051"
+    },
+    "peer1.hospital.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/hospital.com/peers/peer1.hospital.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer1.hospital.com:7051"
+    }
+  }
+}

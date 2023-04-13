@@ -1,0 +1,24 @@
+# Define orderer node organizations
+OrdererOrgs:
+  - Name: Government # name
+    Domain: government.com # domain
+    Specs: # node domain: orderer.government.com
+      - Hostname: orderer # domain name
+
+# Define peer node organizations
+PeerOrgs:
+  # Hospital-Organization
+  - Name: Hospital # name
+    Domain: hospital.com # domain
+    Template: # Define template  Count means the number of notes under this organization
+      Count: 2 # Note domain: peer0.hospital.com and peer1.hospital.com
+    Users: # users information in organization Count means the number of users excluding admin
+      Count: 1 # User: Admin + User1
+
+  # Institute-Organization
+  - Name: Institute
+    Domain: institute.com
+    Template:
+      Count: 2 # Note domain: peer0.institute.com + peer1.institute.com
+    Users:
+      Count: 1 # User: Admin + User1

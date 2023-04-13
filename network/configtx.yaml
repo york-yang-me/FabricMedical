@@ -1,0 +1,171 @@
+# Define the organizations entities
+Organizations:
+  - &Government
+    Name: Government # Organizations name
+    ID: GovernmentMSP # Organizations MSPID
+    MSPDir: crypto-config/ordererOrganizations/government.com/msp #relative location of certificate(generate crypto-config contents)
+    Policies: # Setup associated policies
+      Readers:
+        Type: Signature
+        Rule: "OR('GovernmentMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('GovernmentMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('GovernmentMSP.admin')"
+    OrdererEndpoints:
+      - orderer.government.com:7050
+
+  - &Hospital
+    Name: Hospital
+    ID: HospitalMSP
+    MSPDir: crypto-config/peerOrganizations/hospital.com/msp
+    AnchorPeers: # organizations anchor peers configuration
+      - Host: peer0.hospital.com
+        Port: 7051
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('HospitalMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('HospitalMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('HospitalMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('HospitalMSP.member', 'HospitalMSP.peer')"
+
+  - &Institute
+    Name: Institute
+    ID: InstituteMSP
+    MSPDir: crypto-config/peerOrganizations/institute.com/msp
+    AnchorPeers: # organizations anchor peers configuration
+      - Host: peer0.institute.com
+        Port: 7051
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('InstituteMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('InstituteMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('InstituteMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('InstituteMSP.member', 'InstituteMSP.peer')"
+
+# Define the ability about notes with different version
+Capabilities:
+  # Channel capabilities apply to both the orderers and the peers and must be
+  # supported by both.
+  # Set the value of the capability to true to require it.
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_0: true
+
+# Define some parameter about orderer service, which used to build genesis block
+Orderer: &OrdererDefaults
+  # Orderer type need to specify enabled orderer note
+  # And different implementations correspond to different consensus algorithms
+  OrdererType: solo # temporary consensus algorithms for test (such as kafka, raft)
+  Addresses: # Orderer domain (For connection)
+    - orderer.government.com:7050
+  BatchTimeout: 2s # block time interval
+  BatchSize: # control every block size
+    MaxMessageCount: 10 # message number for each block
+    AbsoluteMaxBytes: 99 MB # max message for each block
+    PreferredMaxBytes: 512 KB # the max length for each block
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+      # BlockValidation specifies what signatures must be included in the block
+      # from the orderer for the peer to validate it.
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    # Who may invoke the 'Broadcast' API
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    # By default, who may modify elements at this config level
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+
+# Define the interaction policy with application for peer organizations
+# Default policy: All Peer Organizations will be able to read data and write data to the ledger
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+# Define configtxgen tools for configuration entrance
+# Specify [Profile] parameter as [configtxgen] tools parameter (TwoOrgsOrdererGenesis or TwoOrgsChannel)
+Profiles:
+  # TwoOrgsOrdererGenesis: configure files to create system channel genesis block
+  # Create a consortium called "MedicalConsortium"
+  # The consortium contains two organizations [Hospital] and [Institute] in configtx.yaml
+  # fabric v2 need to set default channel policy
+  TwoOrgsOrdererGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *Government
+      Capabilities: *OrdererCapabilities
+    Consortiums:
+      MedicalConsortium:
+        Organizations:
+          - *Hospital
+          - *Institute
+  # Use TwoOrgsChannel to configure files, and create application channel
+  TwoOrgsChannel:
+    Consortium: MedicalConsortium
+    <<: *ChannelDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *Hospital
+        - *Institute
+      Capabilities:
+        <<: *ApplicationCapabilities
