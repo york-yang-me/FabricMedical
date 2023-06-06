@@ -48,7 +48,7 @@ func CreateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 		return shim.Error(fmt.Sprintf("CreateAuthorizing-deserialization error: %s", err))
 	}
 	// determine whether the record already exists, and cannot initiate sequence repeatedly
-	// if Endorsement == true  the dna sequence has been endorsed by government
+	// if Endorsement == true  the dna sequence has been endorsed by gmp
 	if realSequence.Endorsement {
 		return shim.Error("this dna sequence has been endorsed, not be authorizing repeatedly")
 	}
@@ -56,7 +56,7 @@ func CreateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	authorizing := &model.Authorizing{
 		ObjectOfAuthorize: objectOfAuthorize,
 		Hospital:          hospital,
-		Institute:         "",
+		Patient:           "",
 		Price:             formattedPrice,
 		CreateTime:        time.Unix(int64(createTime.GetSeconds()), int64(createTime.GetNanos())).Local().Format("2023-03-13 15:04:05"),
 		AuthorizePeriod:   formattedAuthorizePeriod,
@@ -88,12 +88,12 @@ func CreateAppointing(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 	}
 	objectOfAuthorizing := args[0]
 	hospital := args[1]
-	institute := args[2]
-	if objectOfAuthorizing == "" || hospital == "" || institute == "" {
+	patient := args[2]
+	if objectOfAuthorizing == "" || hospital == "" || patient == "" {
 		return shim.Error("parameters exist empty")
 	}
-	if hospital == institute {
-		return shim.Error("hospital can not be the same with institute")
+	if hospital == patient {
+		return shim.Error("hospital can not be the same with patient")
 	}
 	// According to objectOfAuthorizing and hospital, get the dna sequences which want to test and confirm it
 	resultsRealSequence, err := utils.GetStateByPartialCompositeKeys2(stub, model.RealSequenceKey, []string{hospital, objectOfAuthorizing})
@@ -113,36 +113,36 @@ func CreateAppointing(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 	if authorizing.AuthorizingStatus != model.AuthorizationStatusConstant()["publish"] {
 		return shim.Error("the transaction is not authorized")
 	}
-	// according to institute get institute information
-	resultsAccount, err := utils.GetStateByPartialCompositeKeys(stub, model.AccountKey, []string{institute})
+	// according to patient get patient information
+	resultsAccount, err := utils.GetStateByPartialCompositeKeys(stub, model.AccountKey, []string{patient})
 	if err != nil || len(resultsAccount) != 1 {
 		return shim.Error(fmt.Sprintf("Failed to verify hospital information%s", err))
 	}
-	var instituteAccount model.Account
-	if err = json.Unmarshal(resultsAccount[0], &instituteAccount); err != nil {
-		return shim.Error(fmt.Sprintf("query institute information-deserialization error: %s", err))
+	var patientAccount model.Account
+	if err = json.Unmarshal(resultsAccount[0], &patientAccount); err != nil {
+		return shim.Error(fmt.Sprintf("query patient information-deserialization error: %s", err))
 	}
-	if instituteAccount.UserName == "admin" {
+	if patientAccount.UserName == "admin" {
 		return shim.Error(fmt.Sprintf("admin can't be appointed%s", err))
 	}
 	// determine if the balance is sufficient
-	if instituteAccount.Balance < authorizing.Price {
-		return shim.Error(fmt.Sprintf("dna seuqence authorized price is %f, your current balance %f, failed to be appointed", authorizing.Price, instituteAccount.Balance))
+	if patientAccount.Balance < authorizing.Price {
+		return shim.Error(fmt.Sprintf("dna seuqence authorized price is %f, your current balance %f, failed to be appointed", authorizing.Price, patientAccount.Balance))
 	}
-	// put institute writing into authorizing, modify the transaction status
-	authorizing.Institute = institute
+	// put patient writing into authorizing, modify the transaction status
+	authorizing.Patient = patient
 	authorizing.AuthorizingStatus = model.AuthorizationStatusConstant()["delivery"]
 	if err := utils.WriteLedger(authorizing, stub, model.AuthorizingKey, []string{authorizing.Hospital, authorizing.ObjectOfAuthorize}); err != nil {
-		return shim.Error(fmt.Sprintf("faile to put institute writing into authorizing %s", err))
+		return shim.Error(fmt.Sprintf("faile to put patient writing into authorizing %s", err))
 	}
 	createTime, _ := stub.GetTxTimestamp()
 	// put the transaction into ledger, which is helpful to query for institue
 	appointing := &model.Appointing{
-		Institute:   institute,
+		Patient:     patient,
 		CreateTime:  time.Unix(int64(createTime.GetSeconds()), int64(createTime.GetNanos())).Local().Format("2023-03-13 15:04:05"),
 		Authorizing: authorizing,
 	}
-	if err := utils.WriteLedger(appointing, stub, model.AppointingKey, []string{appointing.Institute, appointing.CreateTime}); err != nil {
+	if err := utils.WriteLedger(appointing, stub, model.AppointingKey, []string{appointing.Patient, appointing.CreateTime}); err != nil {
 		return shim.Error(fmt.Sprintf("faile to put the transaction into ledger %s", err))
 	}
 	appointingByte, err := json.Marshal(appointing)
@@ -152,10 +152,10 @@ func CreateAppointing(stub shim.ChaincodeStubInterface, args []string) pb.Respon
 	// Authorization successfully, deduct the balance,
 	// update the balance of the account ledger,
 	// note: the hospital needs to confirm receipt,
-	// the money will be transferred to the hospital's account, here first deduct the institute's balance
-	instituteAccount.Balance -= authorizing.Price
-	if err := utils.WriteLedger(instituteAccount, stub, model.AccountKey, []string{instituteAccount.AccountId}); err != nil {
-		return shim.Error(fmt.Sprintf("Failed to debit institute's balance%s", err))
+	// the money will be transferred to the hospital's account, here first deduct the patient's balance
+	patientAccount.Balance -= authorizing.Price
+	if err := utils.WriteLedger(patientAccount, stub, model.AccountKey, []string{patientAccount.AccountId}); err != nil {
+		return shim.Error(fmt.Sprintf("Failed to debit patient's balance%s", err))
 	}
 	// return successfully
 	return shim.Success(appointingByte)
@@ -212,7 +212,7 @@ func QueryAppointingList(stub shim.ChaincodeStubInterface, args []string) pb.Res
 	return shim.Success(appointingListByte)
 }
 
-// UpdateAuthorizing Update authorization (hospital confirm、institute cancel)
+// UpdateAuthorizing Update authorization (hospital confirm、patient cancel)
 func UpdateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// verify parameter
 	if len(args) != 4 {
@@ -220,13 +220,13 @@ func UpdateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	}
 	objectOfAuthorizing := args[0]
 	hospital := args[1]
-	institute := args[2]
+	patient := args[2]
 	status := args[3]
 	if objectOfAuthorizing == "" || hospital == "" || status == "" {
 		return shim.Error("parameters exist empty")
 	}
-	if hospital == institute {
-		return shim.Error("hospital can not be the same with institute")
+	if hospital == patient {
+		return shim.Error("hospital can not be the same with patient")
 	}
 	// According to objectOfAuthorizing and hospital, get the dna sequence information
 	resultsRealSequence, err := utils.GetStateByPartialCompositeKeys2(stub, model.RealSequenceKey, []string{hospital, objectOfAuthorizing})
@@ -246,13 +246,13 @@ func UpdateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 	if err = json.Unmarshal(resultsAuthorizing[0], &authorizing); err != nil {
 		return shim.Error(fmt.Sprintf("UpdateAuthorizing-deserialization error: %s", err))
 	}
-	// according to hospital, get institute information about appointing
+	// according to hospital, get patient information about appointing
 	var appointing model.Appointing
-	// if the current status is "publish", it means no institute appointed
+	// if the current status is "publish", it means no patient appointed
 	if authorizing.AuthorizingStatus != model.AuthorizationStatusConstant()["publish"] {
-		resultsAppointing, err := utils.GetStateByPartialCompositeKeys2(stub, model.AppointingKey, []string{institute})
+		resultsAppointing, err := utils.GetStateByPartialCompositeKeys2(stub, model.AppointingKey, []string{patient})
 		if err != nil || len(resultsAppointing) == 0 {
-			return shim.Error(fmt.Sprintf("according to %s, failed to get institute information about authorization: %s", institute, err))
+			return shim.Error(fmt.Sprintf("according to %s, failed to get patient information about authorization: %s", patient, err))
 		}
 		for _, v := range resultsAppointing {
 			if v != nil {
@@ -261,7 +261,7 @@ func UpdateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 				if err != nil {
 					return shim.Error(fmt.Sprintf("UpdateAppointing-deserialization error: %s", err))
 				}
-				if s.Authorizing.ObjectOfAuthorize == objectOfAuthorizing && s.Authorizing.Hospital == hospital && s.Institute == institute {
+				if s.Authorizing.ObjectOfAuthorize == objectOfAuthorizing && s.Authorizing.Hospital == hospital && s.Patient == patient {
 					// determine that the status must be in delivery,
 					// in case the dna sequence has already been transacted and is just cancelled.
 					if s.Authorizing.AuthorizingStatus == model.AuthorizationStatusConstant()["delivery"] {
@@ -312,7 +312,7 @@ func UpdateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 			return shim.Error(fmt.Sprintf("%s", err))
 		}
 		appointing.Authorizing = authorizing
-		if err := utils.WriteLedger(appointing, stub, model.AppointingKey, []string{appointing.Institute, appointing.CreateTime}); err != nil {
+		if err := utils.WriteLedger(appointing, stub, model.AppointingKey, []string{appointing.Patient, appointing.CreateTime}); err != nil {
 			return shim.Error(fmt.Sprintf("failed to write into ledger: %s", err))
 		}
 		data, err = json.Marshal(appointing)
@@ -321,13 +321,13 @@ func UpdateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 		}
 		break
 	case "cancelled":
-		data, err = closeAuthorizing("cancelled", authorizing, realSequence, appointing, institute, stub)
+		data, err = closeAuthorizing("cancelled", authorizing, realSequence, appointing, patient, stub)
 		if err != nil {
 			return shim.Error(fmt.Sprintf("%s", err))
 		}
 		break
 	case "expired":
-		data, err = closeAuthorizing("expired", authorizing, realSequence, appointing, institute, stub)
+		data, err = closeAuthorizing("expired", authorizing, realSequence, appointing, patient, stub)
 		if err != nil {
 			return shim.Error(fmt.Sprintf("%s", err))
 		}
@@ -341,7 +341,7 @@ func UpdateAuthorizing(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 // closeAuthorizing
 // 1、stay in the status of "publish"
 // 2、stay in the status of "delivery"
-func closeAuthorizing(closeStart string, authorizing model.Authorizing, realSequence model.RealSequence, appointing model.Appointing, institute string, stub shim.ChaincodeStubInterface) ([]byte, error) {
+func closeAuthorizing(closeStart string, authorizing model.Authorizing, realSequence model.RealSequence, appointing model.Appointing, patient string, stub shim.ChaincodeStubInterface) ([]byte, error) {
 	switch authorizing.AuthorizingStatus {
 	case model.AuthorizationStatusConstant()["saleStart"]:
 		authorizing.AuthorizingStatus = model.AuthorizationStatusConstant()[closeStart]
@@ -359,18 +359,18 @@ func closeAuthorizing(closeStart string, authorizing model.Authorizing, realSequ
 		}
 		return data, nil
 	case model.AuthorizationStatusConstant()["delivery"]:
-		// get institute information by institute
-		resultsInstituteAccount, err := utils.GetStateByPartialCompositeKeys(stub, model.AccountKey, []string{institute})
-		if err != nil || len(resultsInstituteAccount) != 1 {
+		// get patient information by patient
+		resultsPatientAccount, err := utils.GetStateByPartialCompositeKeys(stub, model.AccountKey, []string{patient})
+		if err != nil || len(resultsPatientAccount) != 1 {
 			return nil, err
 		}
-		var accountInstitute model.Account
-		if err = json.Unmarshal(resultsInstituteAccount[0], &accountInstitute); err != nil {
+		var accountPatient model.Account
+		if err = json.Unmarshal(resultsPatientAccount[0], &accountPatient); err != nil {
 			return nil, err
 		}
-		// Cancellation require the fund return to the Institute
-		accountInstitute.Balance += authorizing.Price
-		if err := utils.WriteLedger(accountInstitute, stub, model.AccountKey, []string{accountInstitute.AccountId}); err != nil {
+		// Cancellation require the fund return to the Patient
+		accountPatient.Balance += authorizing.Price
+		if err := utils.WriteLedger(accountPatient, stub, model.AccountKey, []string{accountPatient.AccountId}); err != nil {
 			return nil, err
 		}
 		// reset dna sequence endorsement
@@ -384,7 +384,7 @@ func closeAuthorizing(closeStart string, authorizing model.Authorizing, realSequ
 			return nil, err
 		}
 		appointing.Authorizing = authorizing
-		if err := utils.WriteLedger(appointing, stub, model.AppointingKey, []string{appointing.Institute, appointing.CreateTime}); err != nil {
+		if err := utils.WriteLedger(appointing, stub, model.AppointingKey, []string{appointing.Patient, appointing.CreateTime}); err != nil {
 			return nil, err
 		}
 		data, err := json.Marshal(appointing)

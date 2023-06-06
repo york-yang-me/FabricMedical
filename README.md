@@ -1,4 +1,4 @@
-> 🚀 This project uses Hyperledger Fabric to build the underlying bolckchain network, use go to write smart contract, application layer use gin+fabric-sdk-go, fronted-end use vue+element-ui
+> 🚀 This project uses Hyperledger Fabric to build the underlying blockchain network, use go to write smart contract, application layer use gin+fabric-sdk-go, fronted-end use vue+element-ui
 
 
 ## Environment demand
@@ -20,6 +20,7 @@ Ps Docker install tutorial: [click it](Install.md)
 
 5. go into `application` content, execute `./build.sh` compile image, then execute `./start.sh`
    start the application, use explorer to access [http://localhost:8000/web](http://localhost:8000/web)
+   If you can not run it successfully, please execute them before running `go mod tidy` to update packages into `application/server/`
 
 6. (optional) go into `network/explorer` content, execute `./start.sh` restart blockchain explorer, access [http://localhost:8080](http://localhost:8080), username: admin, password
    123456

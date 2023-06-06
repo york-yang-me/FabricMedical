@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: '基于区块链的房地产交易系统',
-      logo: 'https://s1.ax1x.com/2020/03/18/8w22rj.png'
+      title: 'Blockchain-based medical information systems',
+      logo: 'https://s2.loli.net/2023/05/28/jd2qQxWEAN9rXVf.png'
     }
   }
 }

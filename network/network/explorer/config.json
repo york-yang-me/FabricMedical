@@ -1,0 +1,13 @@
+{
+  "network-configs": {
+    "hospital-network": {
+      "name": "Hospital Network",
+      "profile": "./connection-profile/hospital_network.json"
+    },
+    "patient-network": {
+      "name": "Patient Network",
+      "profile": "./connection-profile/patient_network.json"
+    }
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,65 @@
+{
+  "name": "patient-network",
+  "version": "1.0.0",
+  "client": {
+    "tlsEnable": true,
+    "adminCredential": {
+      "id": "admin",
+      "password": "123456"
+    },
+    "enableAuthentication": true,
+    "organization": "PatientMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        },
+        "orderer": "300"
+      }
+    }
+  },
+  "channels": {
+    "appchannel": {
+      "peers": {
+        "peer0.patient.com": {},
+        "peer1.patient.com": {}
+      },
+      "connection": {
+        "timeout": {
+          "endorser": "6000",
+          "eventHub": "6000",
+          "eventReg": "6000"
+        }
+      }
+    }
+  },
+  "organizations": {
+    "PatientMSP": {
+      "mspid": "PatientMSP",
+      "adminPrivateKey": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/users/Admin@patient.com/msp/keystore/priv_sk"
+      },
+      "peers": [
+        "peer0.patient.com",
+        "peer1.patient.com"
+      ],
+      "signedCert": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/users/Admin@patient.com/msp/signcerts/Admin@patient.com-cert.pem"
+      }
+    }
+  },
+  "peers": {
+    "peer0.patient.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/peers/peer0.patient.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer0.patient.com:7051"
+    },
+    "peer1.patient.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/peers/peer1.patient.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer1.patient.com:7051"
+    }
+  }
+}

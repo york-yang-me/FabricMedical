@@ -13,8 +13,8 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     if (res.code !== 200) {
-      MessageBox.alert('服务器开小差了', 'error', {
-        confirmButtonText: '确定',
+      MessageBox.alert('server has died', 'error', {
+        confirmButtonText: 'confirm',
         type: 'warning'
       })
       return Promise.reject(new Error(res.msg || 'Error'))
@@ -25,14 +25,14 @@ service.interceptors.response.use(
   error => {
     if (error.response === undefined) {
       Message({
-        message: '请求失败 ' + error.message,
+        message: 'request failed ' + error.message,
         type: 'error',
         duration: 5 * 1000
       })
       return Promise.reject(error)
     } else {
       Message({
-        message: '失败 ' + error.response.data.data,
+        message: 'failed ' + error.response.data.data,
         type: 'error',
         duration: 5 * 1000
       })

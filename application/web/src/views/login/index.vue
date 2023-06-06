@@ -3,9 +3,9 @@
     <el-form ref="loginForm" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">基于区块链的房地产交易系统</h3>
+        <h3 class="title">Blockchain-based medical information system</h3>
       </div>
-      <el-select v-model="value" placeholder="请选择用户角色" class="login-select" @change="selectGet">
+      <el-select v-model="value" placeholder="please choose user role" class="login-select" @change="selectGet">
         <el-option
           v-for="item in accountList"
           :key="item.accountId"
@@ -17,10 +17,10 @@
         </el-option>
       </el-select>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">立即进入</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">enter</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">tips: 选择不同用户角色模拟交易</span>
+        <span style="margin-right:20px;">tips: choose different user role to simulate transaction</span>
       </div>
 
     </el-form>
@@ -66,7 +66,7 @@ export default {
           this.loading = false
         })
       } else {
-        this.$message('请选择用户角色')
+        this.$message('please choose user role')
       }
     },
     selectGet(accountId) {

@@ -1,28 +1,28 @@
 version: 1.0.0
 
-# GO SDK使用的客户端部分。
+# GO SDK-the part of client
 client:
-  # 客户端所属的组织，必须是organizations定义的组织
-  organization: JD
-  # 日志级别
+  # organize about client, it must be the organizations defined
+  organization: Patient
+  # log level
   logging:
     level: info
-  # MSP证书的根路径
+  # the root path of MSP certificate
   cryptoconfig:
     path: /network/crypto-config
 
-# 通道定义
+# Channel definition
 channels:
   appchannel:
     orderers:
-      - orderer.qq.com
+      - orderer.gmp.com
     peers:
-      peer0.jd.com:
+      peer0.patient.com:
         endorsingPeer: true
         chaincodeQuery: true
         ledgerQuery: true
         eventSource: true
-      peer1.jd.com:
+      peer1.patient.com:
         endorsingPeer: true
         chaincodeQuery: true
         ledgerQuery: true
@@ -30,64 +30,74 @@ channels:
 
 # 组织配置
 organizations:
-  JD:
-    mspid: "JDMSP"
-    cryptoPath: peerOrganizations/jd.com/users/{username}@jd.com/msp
+  Patient:
+    mspid: "PatientMSP"
+    cryptoPath: peerOrganizations/patient.com/users/{username}@patient.com/msp
     peers:
-      - peer0.jd.com
-      - peer1.jd.com
+      - peer0.patient.com
+      - peer1.patient.com
 
-# orderer节点列表
+# orderer nodes list
 orderers:
-  orderer.qq.com:
-    url: orderer.qq.com:7050
-    # 传递给gRPC客户端构造函数
+  orderer.gmp.com:
+    url: grpcs://orderer.gmp.com:7050
+    # send to gRPC client construct function
     grpcOptions:
-      ssl-target-name-override: orderer.qq.com
+      ssl-target-name-override: orderer.gmp.com
       keep-alive-time: 0s
       keep-alive-timeout: 20s
       keep-alive-permit: false
       fail-fast: false
       allow-insecure: true
+    tlsCACerts:
+      path: /network/crypto-config/ordererOrganizations/gmp.com/tlsca/tlsca.gmp.com-cert.pem
 
-# peers节点列表
+# peers peers list
 peers:
-  # peer节点定义，可以定义多个
-  peer0.jd.com:
-    # URL用于发送背书和查询请求
-    url: peer0.jd.com:7051
-    # 传递给gRPC客户端构造函数
+  # peer nodes definition
+  peer0.patient.com:
+    # URL is used to send endorsement and query request
+    url: grpcs://peer0.patient.com:7051
+    # send to gRPC client construct function
     grpcOptions:
-      ssl-target-name-override: peer0.jd.com
+      ssl-target-name-override: peer0.patient.com
       keep-alive-time: 0s
       keep-alive-timeout: 20s
       keep-alive-permit: false
       fail-fast: false
       allow-insecure: true
-  peer1.jd.com:
-    url: peer1.jd.com:7051
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/patient.com/tlsca/tlsca.patient.com-cert.pem
+  peer1.patient.com:
+    url: grpcs://peer1.patient.com:7051
     grpcOptions:
-      ssl-target-name-override: peer1.jd.com
+      ssl-target-name-override: peer1.patient.com
       keep-alive-time: 0s
       keep-alive-timeout: 20s
       keep-alive-permit: false
       fail-fast: false
       allow-insecure: true
-  peer0.taobao.com:
-    url: peer0.taobao.com:7051
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/patient.com/tlsca/tlsca.patient.com-cert.pem
+  peer0.hospital.com:
+    url: grpcs://peer0.hospital.com:7051
     grpcOptions:
-      ssl-target-name-override: peer0.taobao.com
+      ssl-target-name-override: peer0.hospital.com
       keep-alive-time: 0s
       keep-alive-timeout: 20s
       keep-alive-permit: false
       fail-fast: false
       allow-insecure: true
-  peer1.taobao.com:
-    url: peer1.taobao.com:7051
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/hospital.com/tlsca/tlsca.hospital.com-cert.pem
+  peer1.hospital.com:
+    url: grpcs://peer1.hospital.com:7051
     grpcOptions:
-      ssl-target-name-override: peer1.taobao.com
+      ssl-target-name-override: peer1.hospital.com
       keep-alive-time: 0s
       keep-alive-timeout: 20s
       keep-alive-permit: false
       fail-fast: false
       allow-insecure: true
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/hospital.com/tlsca/tlsca.hospital.com-cert.pem

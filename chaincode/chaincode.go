@@ -26,7 +26,7 @@ func (t *BlockChainRealSequence) Init(stub shim.ChaincodeStubInterface) pb.Respo
 		"4b227777d4dd",
 		"ef2d127de37b",
 	}
-	var userNames = [6]string{"admin", "dna 1", "dna 2", "dna 3", "dna 4", "dna 5"}
+	var userNames = [6]string{"admin", "hospital_1", "hospital_2", "patient_1", "patient_2", "patient_3"}
 	var balances = [6]float64{0, 5000000, 5000000, 5000000, 5000000, 5000000}
 	//initial accounts' data
 	for i, val := range accountIds {

@@ -77,7 +77,7 @@ func CreateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 	return shim.Success(realSequenceByte)
 }
 
-// QueryRealSequenceList query real dna sequence(query all information, and also can check every sequence according to institute)
+// QueryRealSequenceList query real dna sequence(query all information, and also can check every sequence according to patient)
 func QueryRealSequenceList(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var realSequenceList []model.RealSequence
 	results, err := utils.GetStateByPartialCompositeKeys2(stub, model.RealSequenceKey, args)

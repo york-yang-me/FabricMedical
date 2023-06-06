@@ -6,35 +6,35 @@ import (
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
 )
 
-// 配置信息
+// settings
 var (
-	sdk           *fabsdk.FabricSDK                              // Fabric SDK
-	configPath    = "config.yaml"                                // 配置文件路径
-	channelName   = "appchannel"                                 // 通道名称
-	user          = "Admin"                                      // 用户
-	chainCodeName = "fabric-realty"                              // 链码名称
-	endpoints     = []string{"peer0.jd.com", "peer0.taobao.com"} // 要发送交易的节点
+	sdk           *fabsdk.FabricSDK                                     // Fabric SDK
+	configPath    = "config.yaml"                                       // Set file path
+	channelName   = "appchannel"                                        // Channel name
+	user          = "Admin"                                             // users
+	chainCodeName = "fabric-medical"                                    // chaincode name
+	endpoints     = []string{"peer0.patient.com", "peer0.hospital.com"} // the nodes need to send transaction
 )
 
-// Init 初始化
+// Init
 func Init() {
 	var err error
-	// 通过配置文件初始化SDK
+	// use setting files to init SDK
 	sdk, err = fabsdk.New(config.FromFile(configPath))
 	if err != nil {
 		panic(err)
 	}
 }
 
-// ChannelExecute 区块链交互
+// ChannelExecute BC interactive
 func ChannelExecute(fcn string, args [][]byte) (channel.Response, error) {
-	// 创建客户端，表明在通道的身份
+	// create client, show the identity in channel
 	ctx := sdk.ChannelContext(channelName, fabsdk.WithUser(user))
 	cli, err := channel.New(ctx)
 	if err != nil {
 		return channel.Response{}, err
 	}
-	// 对区块链账本的写操作（调用了链码的invoke）
+	// execute writing operation to BC Ledger （use chaincode invoke）
 	resp, err := cli.Execute(channel.Request{
 		ChaincodeID: chainCodeName,
 		Fcn:         fcn,
@@ -43,19 +43,19 @@ func ChannelExecute(fcn string, args [][]byte) (channel.Response, error) {
 	if err != nil {
 		return channel.Response{}, err
 	}
-	//返回链码执行后的结果
+	// return the result after executed
 	return resp, nil
 }
 
-// ChannelQuery 区块链查询
+// ChannelQuery BC query
 func ChannelQuery(fcn string, args [][]byte) (channel.Response, error) {
-	// 创建客户端，表明在通道的身份
+	// create client, show the identity in channel
 	ctx := sdk.ChannelContext(channelName, fabsdk.WithUser(user))
 	cli, err := channel.New(ctx)
 	if err != nil {
 		return channel.Response{}, err
 	}
-	// 对区块链账本查询的操作（调用了链码的invoke），只返回结果
+	// execute querying operation to BC Ledger (use chaincode invoke), only return the result
 	resp, err := cli.Query(channel.Request{
 		ChaincodeID: chainCodeName,
 		Fcn:         fcn,
@@ -64,6 +64,6 @@ func ChannelQuery(fcn string, args [][]byte) (channel.Response, error) {
 	if err != nil {
 		return channel.Response{}, err
 	}
-	//返回链码执行后的结果
+	// return the result after executed
 	return resp, nil
 }

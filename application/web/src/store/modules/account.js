@@ -73,7 +73,7 @@ const actions = {
         }]
       }).then(response => {
         var roles
-        if (response[0].userName === '管理员') {
+        if (response[0].userName === 'admin') {
           roles = ['admin']
         } else {
           roles = ['editor']

@@ -9,7 +9,7 @@ import (
 
 func Hello(c *gin.Context) {
 	appG := app.Gin{C: c}
-	appG.Response(http.StatusOK, "成功", map[string]interface{}{
+	appG.Response(http.StatusOK, "success", map[string]interface{}{
 		"msg": "Hello",
 	})
 }

@@ -45,14 +45,14 @@ export const constantRoutes = [{
 {
   path: '/',
   component: Layout,
-  redirect: '/realestate',
+  redirect: '/realSequence',
   children: [{
-    path: 'realestate',
-    name: 'Realestate',
-    component: () => import('@/views/realestate/list/index'),
+    path: 'realSequence',
+    name: 'RealSequence',
+    component: () => import('@/views/realSequence/list/index'),
     meta: {
-      title: '房产信息',
-      icon: 'realestate'
+      title: 'dna sequence information',
+      icon: 'realSequence'
     }
   }]
 }
@@ -64,98 +64,98 @@ export const constantRoutes = [{
  */
 export const asyncRoutes = [
   {
-    path: '/selling',
+    path: '/authorizing',
     component: Layout,
-    redirect: '/selling/all',
-    name: 'Selling',
+    redirect: '/authorizing/all',
+    name: 'Authorizing',
     alwaysShow: true,
     meta: {
-      title: '销售',
-      icon: 'selling'
+      title: 'authorize',
+      icon: 'authorizing'
     },
     children: [{
       path: 'all',
-      name: 'SellingAll',
-      component: () => import('@/views/selling/all/index'),
+      name: 'AuthorizingAll',
+      component: () => import('@/views/authorizing/all/index'),
       meta: {
-        title: '所有销售',
-        icon: 'sellingAll'
+        title: 'all authorizing information',
+        icon: 'authorizingAll'
       }
     },
     {
       path: 'me',
-      name: 'SellingMe',
-      component: () => import('@/views/selling/me/index'),
+      name: 'AuthorizingMe',
+      component: () => import('@/views/authorizing/me/index'),
       meta: {
         roles: ['editor'],
-        title: '我发起的',
-        icon: 'sellingMe'
+        title: 'initiated by me',
+        icon: 'authorizingMe'
       }
     }, {
-      path: 'buy',
-      name: 'SellingBuy',
-      component: () => import('@/views/selling/buy/index'),
+      path: 'authorize',
+      name: 'AuthorizingBuy',
+      component: () => import('@/views/authorizing/authorize/index'),
       meta: {
         roles: ['editor'],
-        title: '我购买的',
-        icon: 'sellingBuy'
+        title: 'authorizing by me',
+        icon: 'authorizingBuy'
       }
     }
     ]
   },
   {
-    path: '/donating',
+    path: '/appointing',
     component: Layout,
-    redirect: '/donating/all',
-    name: 'Donating',
+    redirect: '/appointing/all',
+    name: 'Appointing',
     alwaysShow: true,
     meta: {
-      title: '捐赠',
-      icon: 'donating'
+      title: 'appoint',
+      icon: 'appointing'
     },
     children: [{
       path: 'all',
-      name: 'DonatingAll',
-      component: () => import('@/views/donating/all/index'),
+      name: 'AppointingAll',
+      component: () => import('@/views/appointing/all/index'),
       meta: {
-        title: '所有捐赠',
-        icon: 'donatingAll'
+        title: 'all appoint information',
+        icon: 'appointingAll'
       }
     },
     {
-      path: 'donor',
-      name: 'DonatingDonor',
-      component: () => import('@/views/donating/donor/index'),
+      path: 'patient',
+      name: 'AppointingPatient',
+      component: () => import('@/views/appointing/patient/index'),
       meta: {
         roles: ['editor'],
-        title: '我发起的捐赠',
-        icon: 'donatingDonor'
+        title: 'appointing by me',
+        icon: 'appointingPatient'
       }
     }, {
-      path: 'grantee',
-      name: 'DonatingGrantee',
-      component: () => import('@/views/donating/grantee/index'),
+      path: 'Hospital',
+      name: 'AppointingHospital',
+      component: () => import('@/views/appointing/hospital/index'),
       meta: {
         roles: ['editor'],
-        title: '我收到的受赠',
-        icon: 'donatingGrantee'
+        title: 'appointing getted',
+        icon: 'appointingHospital'
       }
     }
     ]
   },
   {
-    path: '/addRealestate',
+    path: '/addRealSequence',
     component: Layout,
     meta: {
       roles: ['admin']
     },
     children: [{
-      path: '/addRealestate',
-      name: 'AddRealestate',
-      component: () => import('@/views/realestate/add/index'),
+      path: '/addRealSequence',
+      name: 'AddRealSequence',
+      component: () => import('@/views/realSequence/add/index'),
       meta: {
-        title: '新增房产',
-        icon: 'addRealestate'
+        title: 'add new Sequence',
+        icon: 'addRealSequence'
       }
     }]
   },

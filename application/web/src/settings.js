@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '基于区块链的房地产交易系统',
+  title: 'Blockchain-based medical information systems',
 
   /**
    * @type {boolean} true | false

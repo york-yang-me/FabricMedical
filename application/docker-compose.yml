@@ -3,10 +3,10 @@ version: '2.2'
 networks:
   fabric_network:
     external:
-      name: fabric_medical
+      name: medical_network
 
 services:
-  fabric-realty.app:
+  fabric-medical.app:
     build: .
     image: fabric-medical/application:latest
     container_name: fabric-medical.app
