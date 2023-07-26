@@ -1,0 +1,103 @@
+version: 1.0.0
+
+# GO SDK-the part of client
+client:
+  # organize about client, it must be the organizations defined
+  organization: Patient
+  # log level
+  logging:
+    level: info
+  # the root path of MSP certificate
+  cryptoconfig:
+    path: /network/crypto-config
+
+# Channel definition
+channels:
+  appchannel:
+    orderers:
+      - orderer.gmp.com
+    peers:
+      peer0.patient.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer1.patient.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+# 组织配置
+organizations:
+  Patient:
+    mspid: "PatientMSP"
+    cryptoPath: peerOrganizations/patient.com/users/{username}@patient.com/msp
+    peers:
+      - peer0.patient.com
+      - peer1.patient.com
+
+# orderer nodes list
+orderers:
+  orderer.gmp.com:
+    url: grpcs://orderer.gmp.com:7050
+    # send to gRPC client construct function
+    grpcOptions:
+      ssl-target-name-override: orderer.gmp.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: true
+    tlsCACerts:
+      path: /network/crypto-config/ordererOrganizations/gmp.com/tlsca/tlsca.gmp.com-cert.pem
+
+# peers peers list
+peers:
+  # peer nodes definition
+  peer0.patient.com:
+    # URL is used to send endorsement and query request
+    url: grpcs://peer0.patient.com:7051
+    # send to gRPC client construct function
+    grpcOptions:
+      ssl-target-name-override: peer0.patient.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: true
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/patient.com/tlsca/tlsca.patient.com-cert.pem
+  peer1.patient.com:
+    url: grpcs://peer1.patient.com:7051
+    grpcOptions:
+      ssl-target-name-override: peer1.patient.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: true
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/patient.com/tlsca/tlsca.patient.com-cert.pem
+  peer0.hospital.com:
+    url: grpcs://peer0.hospital.com:7051
+    grpcOptions:
+      ssl-target-name-override: peer0.hospital.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: true
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/hospital.com/tlsca/tlsca.hospital.com-cert.pem
+  peer1.hospital.com:
+    url: grpcs://peer1.hospital.com:7051
+    grpcOptions:
+      ssl-target-name-override: peer1.hospital.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: true
+    tlsCACerts:
+      path: /network/crypto-config/peerOrganizations/hospital.com/tlsca/tlsca.hospital.com-cert.pem

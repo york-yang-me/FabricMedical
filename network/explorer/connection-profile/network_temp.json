@@ -1,0 +1,50 @@
+{
+  "name": "fabric-network",
+  "version": "1.0.0",
+  "client": {
+    "tlsEnable": true,
+    "adminCredential": {
+      "id": "admin",
+      "password": "123456"
+    },
+    "enableAuthentication": true,
+    "organization": "HospitalMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        },
+        "orderer": "300"
+      }
+    }
+  },
+  "channels": {
+    "appchannel": {
+      "peers": {
+        "peer0.hospital.com": {}
+      }
+    }
+  },
+  "organizations": {
+    "HospitalMSP": {
+      "mspid": "HospitalMSP",
+      "adminPrivateKey": {
+        "path": "/tmp/crypto/peerOrganizations/hospital.com/users/Admin@hospital.com/msp/keystore/priv_sk"
+      },
+      "peers": [
+        "peer0.hospital.com"
+      ],
+      "signedCert": {
+        "path": "/tmp/crypto/peerOrganizations/hospital.com/users/Admin@hospital.com/msp/signcerts/Admin@hospital.com-cert.pem"
+      }
+    }
+  },
+  "peers": {
+    "peer0.hospital.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/hospital.com/peers/peer0.hospital.com/tls/ca.crt"
+      },
+      "url": "grpc://peer0.hospital.com:7051"
+    }
+  }
+}

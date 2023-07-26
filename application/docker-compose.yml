@@ -1,0 +1,19 @@
+version: '2.2'
+
+networks:
+  fabric_network:
+    external:
+      name: medical_network
+
+services:
+  fabric-medical.app:
+    build: .
+    image: fabric-medical/application:latest
+    container_name: fabric-medical.app
+    ports:
+      - "8000:8000"
+    volumes:
+      - /usr/share/zoneinfo/Asia/Tokyo:/usr/share/zoneinfo/Asia/Tokyo
+      - ./../network/crypto-config:/network/crypto-config
+    networks:
+      - fabric_network
