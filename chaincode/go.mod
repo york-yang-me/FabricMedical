@@ -3,20 +3,28 @@ module chaincode
 go 1.20
 
 require (
+	github.com/consensys/gnark v0.7.0
+	github.com/consensys/gnark-crypto v0.7.0
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20201119163726-f8ef75b17719
 	github.com/hyperledger/fabric-protos-go v0.0.0-20211118165945-23d738fc3553
 )
 
 require (
+	github.com/fxamacker/cbor/v2 v2.2.0 // indirect
+	github.com/mmcloughlin/addchain v0.4.0 // indirect
+	github.com/rs/zerolog v1.26.1 // indirect
+	github.com/x448/float16 v0.8.4 // indirect
+	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
+)
+
+require (
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/google/go-cmp v0.5.4 // indirect
-	github.com/stretchr/testify v1.7.1-0.20210116013205-6990a05d54c2 // indirect; includes ErrorContains
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
-	golang.org/x/sys v0.0.0-20210420205809-ac73e9fd8988 // indirect
-	golang.org/x/text v0.3.3 // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
+	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8 // indirect
+	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55 // indirect
 	google.golang.org/grpc v1.31.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 replace github.com/onsi/gomega => github.com/onsi/gomega v1.9.0
