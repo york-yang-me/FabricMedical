@@ -22,10 +22,9 @@ func Init() {
 
 func GoRun() {
 	log.Printf("Scheduled task has been opened")
-	// query all authorizing records
-	_, err := bc.ChannelQuery("querySellingList", [][]byte{}) // invoke smart contract
+	_, err := bc.ChannelQuery("querySequenceList", [][]byte{}) // invoke smart contract
 	if err != nil {
-		log.Printf("Scheduled task-queryAuthorizingList failed%s", err.Error())
+		log.Printf("Scheduled task-querySequenceList failed%s", err.Error())
 		return
 	}
 }

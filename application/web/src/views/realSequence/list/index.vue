@@ -39,57 +39,15 @@
             <el-tag type="danger">dna contents: </el-tag>
             <span>{{ val.dnaContents }}</span>
           </div>
-
-          <div v-if="!val.endorsement&&roles[0] !== 'admin'">
-            <el-button type="text" @click="openDialog(val)">authorizing</el-button>
-            <el-divider direction="vertical" />
-            <el-button type="text" @click="openAppointingDialog(val)">appointing</el-button>
-          </div>
           <el-rate v-if="roles[0] === 'admin'" />
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog v-loading="loadingDialog" :visible.sync="dialogCreateAuthorizing" :close-on-click-modal="false" @close="resetForm('realForm')">
-      <el-form ref="realForm" :model="realForm" :rules="rules" label-width="100px">
-        <el-form-item label="price (yen)" prop="price">
-          <el-input-number v-model="realForm.price" :precision="2" :step="10000" :min="0" />
-        </el-form-item>
-        <el-form-item label="Expiry date (days)" prop="authorizePeriod">
-          <el-input-number v-model="realForm.authorizePeriod" :min="1" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="createAuthorizing('realForm')">authorizing immediately</el-button>
-        <el-button @click="dialogCreateAuthorizing = false">cancel</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog v-loading="loadingDialog" :visible.sync="dialogCreateAppointing" :close-on-click-modal="false" @close="resetForm('AppointingForm')">
-      <el-form ref="AppointingForm" :model="AppointingForm" :rules="rulesAppointing" label-width="100px">
-        <el-form-item label="owner" prop="owner">
-          <el-select v-model="AppointingForm.owner" placeholder="please choose owner" @change="selectGet">
-            <el-option
-              v-for="item in accountList"
-              :key="item.accountId"
-              :label="item.userName"
-              :value="item.accountId"
-            >
-              <span style="float: left">{{ item.userName }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.accountId }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="createAppointing('AppointingForm')">appointing immediately</el-button>
-        <el-button @click="dialogCreateAppointing = false">cancel</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { queryAccountList } from '@/api/account'
 import { queryRealSequenceList } from '@/api/realSequence'
 
 export default {
@@ -106,9 +64,6 @@ export default {
       loading: true,
       loadingDialog: false,
       realSequenceList: [],
-      realForm: {
-        price: 0,
-      },
       rules: {
         price: [
           { validator: checkArea, trigger: 'blur' }
@@ -159,9 +114,6 @@ export default {
     text-align: center;
     min-height: 100%;
     overflow: hidden;
-  }
-  .tag {
-    float: left;
   }
 
   .item {
