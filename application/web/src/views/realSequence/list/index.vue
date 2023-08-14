@@ -91,8 +91,6 @@
 import { mapGetters } from 'vuex'
 import { queryAccountList } from '@/api/account'
 import { queryRealSequenceList } from '@/api/realSequence'
-import { createAuthorizing } from '@/api/authorizing'
-import { createAppointing } from '@/api/appointing'
 
 export default {
   name: 'RealSequence',
@@ -108,27 +106,13 @@ export default {
       loading: true,
       loadingDialog: false,
       realSequenceList: [],
-      dialogCreateAuthorizing: false,
-      dialogCreateAppointing: false,
       realForm: {
         price: 0,
-        authorizePeriod: 0
       },
       rules: {
         price: [
           { validator: checkArea, trigger: 'blur' }
         ],
-        authorizePeriod: [
-          { validator: checkArea, trigger: 'blur' }
-        ]
-      },
-      AppointingForm: {
-        owner: ''
-      },
-      rulesAppointing: {
-        owner: [
-          { required: true, message: 'please choose owner', trigger: 'change' }
-        ]
       },
       accountList: [],
       valItem: {}
@@ -164,123 +148,6 @@ export default {
     }
   },
   methods: {
-    // openDialog(item) {
-    //   this.dialogCreateAuthorizing = true
-    //   this.valItem = item
-    // },
-    // openAppointingDialog(item) {
-    //   this.dialogCreateAppointing = true
-    //   this.valItem = item
-    //   queryAccountList().then(response => {
-    //     if (response !== null) {
-    //       // filter admin and current user
-    //       this.accountList = response.filter(item =>
-    //         item.userName !== 'admin' && item.accountId !== this.accountId
-    //       )
-    //     }
-    //   })
-    // },
-    // createAuthorizing(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       this.$confirm('Whether authorizing immediately?', 'tip', {
-    //         confirmButtonText: 'confirm',
-    //         cancelButtonText: 'cancel',
-    //         type: 'success'
-    //       }).then(() => {
-    //         this.loadingDialog = true
-    //         createAuthorizing({
-    //           objectOfAuthorize: this.valItem.realSequenceId,
-    //           patient: this.valItem.owner,
-    //           price: this.realForm.price,
-    //           authorizePeriod: this.realForm.authorizePeriod
-    //         }).then(response => {
-    //           this.loadingDialog = false
-    //           this.dialogCreateAuthorizing = false
-    //           if (response !== null) {
-    //             this.$message({
-    //               type: 'success',
-    //               message: 'authorizing success!'
-    //             })
-    //           } else {
-    //             this.$message({
-    //               type: 'error',
-    //               message: 'authorizing failed!'
-    //             })
-    //           }
-    //           setTimeout(() => {
-    //             window.location.reload()
-    //           }, 1000)
-    //         }).catch(_ => {
-    //           this.loadingDialog = false
-    //           this.dialogCreateAuthorizing = false
-    //         })
-    //       }).catch(() => {
-    //         this.loadingDialog = false
-    //         this.dialogCreateAuthorizing = false
-    //         this.$message({
-    //           type: 'info',
-    //           message: 'cancelled'
-    //         })
-    //       })
-    //     } else {
-    //       return false
-    //     }
-    //   })
-    // },
-    // createAppointing(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       this.$confirm('Whether to donate immediately?', 'tip', {
-    //         confirmButtonText: 'confirm',
-    //         cancelButtonText: 'cancel',
-    //         type: 'success'
-    //       }).then(() => {
-    //         this.loadingDialog = true
-    //         createAppointing({
-    //           objectOfAppointing: this.valItem.realSequenceId,
-    //           patient: this.valItem.owner,
-    //           hospital: this.AppointingForm.owner
-    //         }).then(response => {
-    //           this.loadingDialog = false
-    //           this.dialogCreateAppointing = false
-    //           if (response !== null) {
-    //             this.$message({
-    //               type: 'success',
-    //               message: 'appointing success!'
-    //             })
-    //           } else {
-    //             this.$message({
-    //               type: 'error',
-    //               message: 'appointing failed!'
-    //             })
-    //           }
-    //           setTimeout(() => {
-    //             window.location.reload()
-    //           }, 1000)
-    //         }).catch(_ => {
-    //           this.loadingDialog = false
-    //           this.dialogCreateAppointing = false
-    //         })
-    //       }).catch(() => {
-    //         this.loadingDialog = false
-    //         this.dialogCreateAppointing = false
-    //         this.$message({
-    //           type: 'info',
-    //           message: 'cancelled'
-    //         })
-    //       })
-    //     } else {
-    //       return false
-    //     }
-    //   })
-    // },
-    // resetForm(formName) {
-    //   this.$refs[formName].resetFields()
-    // },
-    // selectGet(accountId) {
-    //   this.AppointingForm.owner = accountId
-    // }
   }
 }
 

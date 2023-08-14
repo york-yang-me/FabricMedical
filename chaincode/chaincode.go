@@ -56,16 +56,6 @@ func (t *BlockChainRealSequence) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 		return api.CreateRealSequence(stub, args)
 	case "queryRealSequenceList":
 		return api.QueryRealSequenceList(stub, args)
-	case "createAuthorizing":
-		return api.CreateAuthorizing(stub, args)
-	case "createAppointing":
-		return api.CreateAppointing(stub, args)
-	case "queryAuthorizingList":
-		return api.QueryAuthorizingList(stub, args)
-	case "queryAppointingList":
-		return api.QueryAppointingList(stub, args)
-	case "updateAuthorizing":
-		return api.UpdateAuthorizing(stub, args)
 	case "createRealSequenceHash":
 		return gnark.CreateRealSequenceHash(stub, args)
 	case "updateRealSequence":
