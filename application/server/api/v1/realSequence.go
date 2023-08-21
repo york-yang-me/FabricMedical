@@ -16,6 +16,7 @@ type RealSequenceRequestBody struct {
 	Owner          string `json:"owner"`          // Owner(DNA Holders)(Owner AccountId)
 	TotalLength    int    `json:"totalLength"`    // total length
 	DNAContents    string `json:"dnaContents"`    // DNA contents
+	Description    string `json:"description"`    // DNA description
 }
 
 type RealSequenceQueryRequestBody struct {
@@ -42,12 +43,15 @@ func CreateRealSequence(c *gin.Context) {
 	bodyBytes = append(bodyBytes, []byte(body.Owner))
 	bodyBytes = append(bodyBytes, []byte(strconv.Itoa(body.TotalLength)))
 	bodyBytes = append(bodyBytes, []byte(SequenceHash))
+	bodyBytes = append(bodyBytes, []byte(body.Description))
+
 	// invoke smart contract
 	resp, err := bc.ChannelExecute("createRealSequence", bodyBytes)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, "failed", err.Error())
 		return
 	}
+
 	var data map[string]interface{}
 	if err = json.Unmarshal(bytes.NewBuffer(resp.Payload).Bytes(), &data); err != nil {
 		appG.Response(http.StatusInternalServerError, "failed", err.Error())
@@ -74,6 +78,35 @@ func QueryRealSequenceList(c *gin.Context) {
 		appG.Response(http.StatusInternalServerError, "failed", err.Error())
 		return
 	}
+	// deserialize json
+	var data []map[string]interface{}
+	if err = json.Unmarshal(bytes.NewBuffer(resp.Payload).Bytes(), &data); err != nil {
+		appG.Response(http.StatusInternalServerError, "failed", err.Error())
+		return
+	}
+	appG.Response(http.StatusOK, "success", data)
+}
+
+// 需要修改
+func ModifyRealSequenceList(c *gin.Context) {
+	appG := app.Gin{C: c}
+	body := new(RealSequenceQueryRequestBody)
+	// parse Body parameter
+	if err := c.ShouldBind(body); err != nil {
+		appG.Response(http.StatusBadRequest, "failed", fmt.Sprintf("parameter error%s", err.Error()))
+		return
+	}
+	var bodyBytes [][]byte
+	if body.Owner != "" {
+		bodyBytes = append(bodyBytes, []byte(body.Owner))
+	}
+	// invoke smart contract
+	resp, err := bc.ChannelQuery("queryRealSequenceList", bodyBytes)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, "failed", err.Error())
+		return
+	}
+
 	// deserialize json
 	var data []map[string]interface{}
 	if err = json.Unmarshal(bytes.NewBuffer(resp.Payload).Bytes(), &data); err != nil {

@@ -8,11 +8,9 @@ import (
 )
 
 // VerifyProof verify the proof
-func VerifyProof(hash string, verifyKey, proofBytes []byte) (bool, error) {
-	assignment1 := Circuit{
-		Hash: hash,
-	}
-	publicWitness1, err := frontend.NewWitness(&assignment1, ecc.BN254, frontend.PublicOnly())
+func VerifyProof(c frontend.Circuit, verifyKey, proofBytes []byte) (bool, error) {
+
+	publicWitness1, err := frontend.NewWitness(c, ecc.BN254, frontend.PublicOnly())
 	if err != nil {
 		return false, err
 	}

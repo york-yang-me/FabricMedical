@@ -53,11 +53,11 @@ func CreateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 		return shim.Error(fmt.Sprintf("failed to verify owner information %s", err))
 	}
 	realSequence := &model.RealSequence{
-		RealSequenceID: stub.GetTxID()[:16],
-		Owner:          owner,
-		Endorsement:    false,
-		TotalLength:    formattedTotalLength,
-		DNAContents:    formattedDNAContents,
+		RealSequenceID:  stub.GetTxID()[:16],
+		Owner:           owner,
+		Endorsement:     false,
+		TotalLength:     formattedTotalLength,
+		DNAContentsHash: formattedDNAContents,
 	}
 	// write into ledger
 	if err := utils.WriteLedger(realSequence, stub, model.RealSequenceKey, []string{realSequence.Owner, realSequence.RealSequenceID}); err != nil {

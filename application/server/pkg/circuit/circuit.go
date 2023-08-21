@@ -1,4 +1,4 @@
-package verification
+package circuit
 
 import (
 	"github.com/consensys/gnark/frontend"
