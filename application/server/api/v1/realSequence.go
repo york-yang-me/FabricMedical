@@ -34,11 +34,14 @@ func CreateRealSequence(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, "failed", "TotalLength, DNA contents must be bigger than 0，and DNA contents < total length")
 		return
 	}
+
+	SequenceHash := HashCalc(body.DNAContents)
+
 	var bodyBytes [][]byte
 	bodyBytes = append(bodyBytes, []byte(body.RealSequenceID))
 	bodyBytes = append(bodyBytes, []byte(body.Owner))
 	bodyBytes = append(bodyBytes, []byte(strconv.Itoa(body.TotalLength)))
-	bodyBytes = append(bodyBytes, []byte(body.DNAContents))
+	bodyBytes = append(bodyBytes, []byte(SequenceHash))
 	// invoke smart contract
 	resp, err := bc.ChannelExecute("createRealSequence", bodyBytes)
 	if err != nil {

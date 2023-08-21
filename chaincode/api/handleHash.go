@@ -1,6 +1,7 @@
-package gnark
+package api
 
 import (
+	"chaincode/verification"
 	"encoding/hex"
 	"encoding/json"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
@@ -23,6 +24,7 @@ func CreateRealSequenceHash(stub shim.ChaincodeStubInterface, args []string) pb.
 	}
 
 	value, err := stub.GetState(info.Hash)
+
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -33,8 +35,7 @@ func CreateRealSequenceHash(stub shim.ChaincodeStubInterface, args []string) pb.
 
 	// record hash value to state database
 	m, _ := json.Marshal(info)
-	err = stub.PutState(info.Hash, m)
-	if err != nil {
+	if err = stub.PutState(info.Hash, m); err != nil {
 		return shim.Error(err.Error())
 	}
 	return shim.Success(nil)
@@ -63,7 +64,7 @@ func UpdateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 	witness, _ := hex.DecodeString(args[2])
 
 	// verify if the user has dna sequence
-	result, err := verifyProof(info.Hash, vk, witness)
+	result, err := verification.VerifyProof(info.Hash, vk, witness)
 	if err != nil || !result {
 		return shim.Error("verify fail")
 	}

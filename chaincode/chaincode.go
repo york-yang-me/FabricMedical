@@ -2,7 +2,6 @@ package main
 
 import (
 	"chaincode/api"
-	"chaincode/gnark"
 	"chaincode/model"
 	"chaincode/pkg/utils"
 	"fmt"
@@ -57,11 +56,11 @@ func (t *BlockChainRealSequence) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 	case "queryRealSequenceList":
 		return api.QueryRealSequenceList(stub, args)
 	case "createRealSequenceHash":
-		return gnark.CreateRealSequenceHash(stub, args)
+		return api.CreateRealSequenceHash(stub, args)
 	case "updateRealSequence":
-		return gnark.UpdateRealSequence(stub, args)
+		return api.UpdateRealSequence(stub, args)
 	case "querySequenceInfo":
-		return gnark.QuerySequenceInfo(stub, args)
+		return api.QuerySequenceInfo(stub, args)
 	default:
 		return shim.Error(fmt.Sprintf("no such function: %s", funcName))
 	}
