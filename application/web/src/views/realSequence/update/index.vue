@@ -15,17 +15,17 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="total length" prop="totalLength">
-        <el-input-number v-model="ruleForm.totalLength" :step="1" :min="0"/>
+      <el-form-item label="dna hash" prop="dnaContents">
+        <el-input type="textarea" placeholder="input dna sequence contents hash" v-model="ruleForm.dnaContents" />
       </el-form-item>
-      <el-form-item label="dna contents" prop="dnaContents">
-        <el-input type="textarea" placeholder="input dna sequence contents" v-model="ruleForm.dnaContents" />
-      </el-form-item>
-      <el-form-item label="dna description" prop="description">
+      <el-form-item label="description" prop="description">
         <el-input type="textarea" placeholder="input dna sequence description" v-model="ruleForm.description" />
       </el-form-item>
+      <el-form-item label="proof" prop="proof">
+        <el-input type="textarea" placeholder="input modification permission proof" v-model="ruleForm.proof" />
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">create</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">update</el-button>
         <el-button @click="resetForm('ruleForm')">reset</el-button>
       </el-form-item>
     </el-form>
@@ -35,7 +35,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { queryAccountList } from '@/api/account'
-import { createRealSequence } from '@/api/realSequence'
+import { updateRealSequence } from '@/api/realSequence'
 
 export default {
   name: 'UpdateRealSequence',
@@ -50,20 +50,24 @@ export default {
     return {
       ruleForm: {
         owner: '',
-        totalLength: 0,
-        dnaContents: ''
+        dnaContents: '',
+        description: '',
+        proof: '',
       },
       accountList: [],
       rules: {
         owner: [
           { required: true, message: 'please choose owner', trigger: 'change' }
         ],
-        totalLength: [
-          { validator: checkLength, trigger: 'blur' }
-        ],
         dnaContents: [
           { validator: checkLength, trigger: 'blur' }
-        ]
+        ],
+        description: [
+          { validator: checkLength, trigger: 'blur' }
+        ],
+        proof: [
+          { validator: checkLength, trigger: 'blur' }
+        ],
       },
       loading: false
     }
@@ -73,7 +77,7 @@ export default {
       'accountId'
     ])
   },
-  updated() {
+  created() {
     queryAccountList().then(response => {
       if (response !== null) {
         // filter the admin
@@ -94,11 +98,10 @@ export default {
           }).then(() => {
             this.loading = true
             updateRealSequence({
-              realSequenceID: this.accountId,
               owner: this.ruleForm.owner,
-              totalLength: this.ruleForm.totalLength,
               dnaContents: this.ruleForm.dnaContents,
               description: this.ruleForm.description,
+              proof: this.ruleForm.proof,
             }).then(response => {
               this.loading = false
               if (response !== null) {

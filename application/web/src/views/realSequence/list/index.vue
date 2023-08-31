@@ -17,33 +17,33 @@
     </div>
     <el-row v-loading="loading" :gutter="20">
       <el-col v-for="(val,index) in realSequenceList" :key="index" :span="6" :offset="1">
-        <el-card class="realSequence-card">
+        <el-card class="realSequence-card" align="left">
           <div slot="header" class="clearfix">
             Endorse status:
             <span style="color: rgb(255, 0, 0);">{{ val.endorsement }}</span>
           </div>
 
           <div class="item">
-            <el-tag>Account ID: </el-tag>
+            <el-tag id="accountID">Account ID: </el-tag>
             <span>{{ val.realSequenceId }}</span>
           </div>
           <div class="item">
-            <el-tag type="success">owner ID: </el-tag>
+            <el-tag id="ownerID" type="success">owner ID: </el-tag>
             <span>{{ val.owner }}</span>
           </div>
           <div class="item">
-            <el-tag type="warning">total length: </el-tag>
+            <el-tag id="totalLength" type="warning">total length: </el-tag>
             <span>{{ val.totalLength }}</span>
           </div>
           <div class="item">
-            <el-tag type="danger">dna contents: </el-tag>
-            <span>{{ val.dnaContents }}</span>
+            <el-tag id="dnaContents" type="danger">dna contents: </el-tag>
+            <span style="white-space: normal; word-break: break-all; display: block; padding: 10px">{{ val.dnaContents }}</span>
           </div>
           <div class="item">
-            <el-tag type="info">description: </el-tag>
+            <el-tag id="description" type="info">description: </el-tag>
             <span>{{ val.description }}</span>
           </div>
-          <el-rate v-if="roles[0] === 'admin'" />
+          <el-rate align="middle" v-if="roles[0] === 'admin'" />
         </el-card>
       </el-col>
     </el-row>
@@ -136,7 +136,8 @@ export default {
 
   .realSequence-card {
     width: 280px;
-    height: 340px;
+    height: 420px;
     margin: 18px;
   }
+
 </style>

@@ -3,7 +3,7 @@ package v1
 import (
 	"application/pkg/circuit"
 	"bytes"
-	"fmt"
+	"encoding/hex"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/frontend"
@@ -11,9 +11,9 @@ import (
 	"log"
 )
 
-func Generate(preImage string, hash string) ([]byte, []byte, error) {
+func Generate(preImage string, hash string) (string, string, error) {
 	var c circuit.Circuit
-	ccs, err := frontend.Compile(ecc.BN254, r1cs.NewBuilder, &c)
+	ccs, err := frontend.Compile(ecc.BLS12_381, r1cs.NewBuilder, &c)
 	if err != nil {
 		log.Fatalln("generate circuit failed:", err)
 	}
@@ -27,25 +27,19 @@ func Generate(preImage string, hash string) ([]byte, []byte, error) {
 	c.PreImage = preImage
 	c.Hash = hash
 
-	witness, err := frontend.NewWitness(&c, ecc.BN254)
-	if err != nil {
-		return nil, nil, fmt.Errorf("generate witness error: %s", err)
-	}
+	witness, _ := frontend.NewWitness(&c, ecc.BLS12_381)
 
-	proof, err := groth16.Prove(ccs, pk, witness)
-	if err != nil {
-		return nil, nil, fmt.Errorf("generate proof error: %s", err)
-	}
+	proof, _ := groth16.Prove(ccs, pk, witness)
 
 	var proofBuffer bytes.Buffer
 	proofBuffer.Reset()
 	proof.WriteRawTo(&proofBuffer)
-	proofBufferBytes := proofBuffer.Bytes()
+	proofBufferString := hex.EncodeToString(proofBuffer.Bytes())
 
 	var vkBuffer bytes.Buffer
 	vkBuffer.Reset()
 	vk.WriteRawTo(&vkBuffer)
-	vkBufferBytes := vkBuffer.Bytes()
+	vkBufferString := hex.EncodeToString(vkBuffer.Bytes())
 
-	return vkBufferBytes, proofBufferBytes, nil
+	return vkBufferString, proofBufferString, nil
 }

@@ -21,7 +21,7 @@
       <el-form-item label="dna contents" prop="dnaContents">
         <el-input type="textarea" placeholder="input dna sequence contents" v-model="ruleForm.dnaContents" />
       </el-form-item>
-      <el-form-item label="dna description" prop="description">
+      <el-form-item label="description" prop="description">
         <el-input type="textarea" placeholder="input dna sequence description" v-model="ruleForm.description" />
       </el-form-item>
       <el-form-item>
@@ -51,7 +51,8 @@ export default {
       ruleForm: {
         owner: '',
         totalLength: 0,
-        dnaContents: ''
+        dnaContents: '',
+        description: '',
       },
       accountList: [],
       rules: {
@@ -63,7 +64,10 @@ export default {
         ],
         dnaContents: [
           { validator: checkLength, trigger: 'blur' }
-        ]
+        ],
+        description: [
+          { validator: checkLength, trigger: 'blur' }
+        ],
       },
       loading: false
     }
@@ -73,7 +77,7 @@ export default {
       'accountId'
     ])
   },
-  created() {
+  created(){
     queryAccountList().then(response => {
       if (response !== null) {
         // filter the admin
@@ -97,7 +101,8 @@ export default {
               realSequenceID: this.accountId,
               owner: this.ruleForm.owner,
               totalLength: this.ruleForm.totalLength,
-              dnaContents: this.ruleForm.dnaContents
+              dnaContents: this.ruleForm.dnaContents,
+              description: this.ruleForm.description
             }).then(response => {
               this.loading = false
               if (response !== null) {

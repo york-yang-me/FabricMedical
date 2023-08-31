@@ -13,10 +13,7 @@ require (
 require (
 	github.com/Knetic/govaluate v3.0.0+incompatible // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/bits-and-blooms/bitset v1.5.0 // indirect
-	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/cloudflare/cfssl v1.4.1 // indirect
-	github.com/consensys/bavard v0.1.13 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/fxamacker/cbor/v2 v2.4.0 // indirect
@@ -29,7 +26,6 @@ require (
 	github.com/golang/mock v1.4.3 // indirect
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/google/certificate-transparency-go v1.0.21 // indirect
-	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hyperledger/fabric-config v0.0.5 // indirect
 	github.com/hyperledger/fabric-lib-go v1.0.0 // indirect
@@ -73,5 +69,4 @@ require (
 	google.golang.org/grpc v1.29.1 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	rsc.io/tmplfunc v0.0.3 // indirect
 )

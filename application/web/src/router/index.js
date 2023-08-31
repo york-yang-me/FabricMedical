@@ -80,6 +80,23 @@ export const asyncRoutes = [
     }]
   },
 
+  {
+    path: '/updateRealSequence',
+    component: Layout,
+    meta: {
+      roles: ['admin']
+    },
+    children: [{
+      path: '/updateRealSequence',
+      name: 'UpdateRealSequence',
+      component: () => import('@/views/realSequence/update/index'),
+      meta: {
+        title: 'Update DNA Information',
+        icon: 'updateRealSequence'
+      }
+    }]
+  },
+
   // 404 page must be placed at the end !!!
   {
     path: '*',

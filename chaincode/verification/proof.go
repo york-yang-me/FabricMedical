@@ -33,17 +33,17 @@ func (circuit *Circuit) Define(api frontend.API) error {
 func VerifyProof(hash string, verifyKey, proofBytes []byte) (bool, error) {
 	assignment := Circuit{Hash: hash}
 
-	publicWitness1, err := frontend.NewWitness(&assignment, ecc.BN254, frontend.PublicOnly())
+	publicWitness1, err := frontend.NewWitness(&assignment, ecc.BLS12_381, frontend.PublicOnly())
 	if err != nil {
 		return false, err
 	}
 
-	proof := groth16.NewProof(ecc.BN254)
+	proof := groth16.NewProof(ecc.BLS12_381)
 	if _, err := proof.ReadFrom(bytes.NewBuffer(proofBytes)); err != nil {
 		return false, err
 	}
 
-	vk := groth16.NewVerifyingKey(ecc.BN254)
+	vk := groth16.NewVerifyingKey(ecc.BLS12_381)
 	if _, err := vk.ReadFrom(bytes.NewBuffer(verifyKey)); err != nil {
 		return false, err
 	}

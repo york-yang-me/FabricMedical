@@ -15,9 +15,10 @@ import (
 // CreateRealSequence create realSequence(admin)
 func CreateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// verify parameters
-	if len(args) != 4 {
+	if len(args) != 7 {
 		return shim.Error("the number of parameters are not satisfy")
 	}
+
 	accountId := args[0] // accountId is used for verify admin
 	owner := args[1]
 	totalLength := args[2]
@@ -105,11 +106,21 @@ func QueryRealSequenceList(stub shim.ChaincodeStubInterface, args []string) pb.R
 }
 
 // UpdateRealSequence
-// args[0] hash  args[1] description args[2] proof
+// args[0] accountId args[1] Owner args[2] hash  args[3] description args[4] proof
 func UpdateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	results, err := utils.GetStateByPartialCompositeKeys2(stub, model.RealSequenceKey, args)
+
+	if len(args) != 4 {
+		return shim.Error("have not enough parameters")
+	}
+
+	owner := args[0]
+	hash := args[1]
+	description := args[2]
+	proof := args[3]
+
+	results, err := utils.GetStateByPartialCompositeKeys2(stub, model.RealSequenceKey, []string{owner})
 	if err != nil {
-		return shim.Error(fmt.Sprintf("%s", err))
+		return shim.Error(fmt.Sprintf("Get state key error: %s", err))
 	}
 
 	for _, v := range results {
@@ -119,20 +130,39 @@ func UpdateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 			if err != nil {
 				return shim.Error(fmt.Sprintf("QueryRealSequenceList-deserialization error: %s", err))
 			}
-			if realSequence.DNAContentsHash == args[0] {
+			if realSequence.DNAContentsHash == hash {
 				vk, _ := hex.DecodeString(realSequence.VerifyKey)
-				witness, _ := hex.DecodeString(args[2])
+				witness, _ := hex.DecodeString(proof)
 				// verify if the user has dna sequence
 				result, err := verification.VerifyProof(realSequence.DNAContentsHash, vk, witness)
 				if err != nil || !result {
 					return shim.Error("verify fail")
 				}
-				realSequence.Description = args[1]
+
+				//// delete origin ledger
+				//if err := utils.DelLedger(stub, model.RealSequenceKey, []string{owner, realSequence.RealSequenceID}); err != nil {
+				//	return shim.Error(fmt.Sprintf("%s", err))
+				//}
+				//
+				//confirmDelInfo, err := utils.GetStateByPartialCompositeKeys2(stub, model.RealSequenceKey, []string{owner, realSequence.RealSequenceID})
+				//if err != nil || len(confirmDelInfo) != 0 {
+				//	return shim.Error(fmt.Sprintf("according to %s and %s, failed to del dna sequence: %s", owner, realSequence.RealSequenceID, err))
+				//}
+
+				//realSequence.RealSequenceID = stub.GetTxID()[:16]
+				realSequence.Description = description
 				// write into ledger
-				if err := utils.WriteLedger(realSequence, stub, model.RealSequenceKey, []string{realSequence.Owner, realSequence.RealSequenceID}); err != nil {
+				if err := utils.WriteLedger(realSequence, stub, model.RealSequenceKey, []string{owner, realSequence.RealSequenceID}); err != nil {
 					return shim.Error(fmt.Sprintf("%s", err))
 				}
-				return shim.Success(nil)
+
+				// return created information successfully
+				realSequenceByte, err := json.Marshal(realSequence)
+				if err != nil {
+					return shim.Error(fmt.Sprintf("error in serialization of successfully updated information: %s", err))
+				}
+
+				return shim.Success(realSequenceByte)
 			}
 		}
 	}

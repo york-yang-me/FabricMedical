@@ -23,7 +23,7 @@ export default {
       this.getBreadcrumb()
     }
   },
-  created() {
+  created(){
     this.getBreadcrumb()
   },
   methods: {
@@ -33,7 +33,7 @@ export default {
       const first = matched[0]
 
       if (!this.isHome(first)) {
-        matched = [{ path: '/realsquence', meta: { title: 'dna squence information' }}].concat(matched)
+        matched = [{ path: '/realSequence', meta: { title: 'dna sequence information' }}].concat(matched)
       }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
@@ -43,7 +43,7 @@ export default {
       if (!name) {
         return false
       }
-      return name.trim().toLocaleLowerCase() === 'realsquence'.toLocaleLowerCase()
+      return name.trim() === 'realSequence'
     },
     pathCompile(path) {
       // To solve this problem https://github.com/PanJiaChen/vue-element-admin/issues/561

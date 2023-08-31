@@ -23,6 +23,13 @@ type RealSequenceQueryRequestBody struct {
 	Owner string `json:"owner"` // Owner(DNA Holders)(Owner AccountId)
 }
 
+type RealSequenceUpdateRequestBody struct {
+	Owner       string `json:"owner"`       // Owner(DNA Holders)(Owner AccountId)
+	DNAContents string `json:"dnaContents"` // DNA contents
+	Description string `json:"description"` // DNA description
+	Proof       string `json:"proof"`       // proof for zk-snarks
+}
+
 func CreateRealSequence(c *gin.Context) {
 	appG := app.Gin{C: c}
 	body := new(RealSequenceRequestBody)
@@ -45,8 +52,8 @@ func CreateRealSequence(c *gin.Context) {
 	bodyBytes = append(bodyBytes, []byte(strconv.Itoa(body.TotalLength)))
 	bodyBytes = append(bodyBytes, []byte(SequenceHash))
 	bodyBytes = append(bodyBytes, []byte(body.Description))
-	bodyBytes = append(bodyBytes, vk)
-	bodyBytes = append(bodyBytes, proof)
+	bodyBytes = append(bodyBytes, []byte(vk))
+	bodyBytes = append(bodyBytes, []byte(proof))
 
 	// invoke smart contract
 	resp, err := bc.ChannelExecute("createRealSequence", bodyBytes)
@@ -60,6 +67,7 @@ func CreateRealSequence(c *gin.Context) {
 		appG.Response(http.StatusInternalServerError, "failed", err.Error())
 		return
 	}
+
 	appG.Response(http.StatusOK, "success", data)
 }
 
@@ -81,6 +89,7 @@ func QueryRealSequenceList(c *gin.Context) {
 		appG.Response(http.StatusInternalServerError, "failed", err.Error())
 		return
 	}
+
 	// deserialize json
 	var data []map[string]interface{}
 	if err = json.Unmarshal(bytes.NewBuffer(resp.Payload).Bytes(), &data); err != nil {
@@ -92,23 +101,30 @@ func QueryRealSequenceList(c *gin.Context) {
 
 func ModifyRealSequenceList(c *gin.Context) {
 	appG := app.Gin{C: c}
-	body := new(RealSequenceQueryRequestBody)
+	body := new(RealSequenceUpdateRequestBody)
 	// parse Body parameter
 	if err := c.ShouldBind(body); err != nil {
 		appG.Response(http.StatusBadRequest, "failed", fmt.Sprintf("parameter error%s", err.Error()))
 		return
 	}
 	var bodyBytes [][]byte
-	if body.Owner != "" {
-		bodyBytes = append(bodyBytes, []byte(body.Owner))
-	}
+	bodyBytes = append(bodyBytes, []byte(body.Owner))
+	bodyBytes = append(bodyBytes, []byte(body.DNAContents))
+	bodyBytes = append(bodyBytes, []byte(body.Description))
+	bodyBytes = append(bodyBytes, []byte(body.Proof))
 
 	// invoke smart contract
-	_, err := bc.ChannelQuery("updateRealSequence", bodyBytes)
+	resp, err := bc.ChannelExecute("updateRealSequence", bodyBytes)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, "failed", err.Error())
 		return
 	}
 
-	appG.Response(http.StatusOK, "success", "update success!")
+	var data map[string]interface{}
+	if err = json.Unmarshal(bytes.NewBuffer(resp.Payload).Bytes(), &data); err != nil {
+		appG.Response(http.StatusInternalServerError, "failed", err.Error())
+		return
+	}
+
+	appG.Response(http.StatusOK, "success", data)
 }
