@@ -31,12 +31,13 @@ func CreateRealSequence(c *gin.Context) {
 		appG.Response(http.StatusBadRequest, "failed", fmt.Sprintf("parameter error%s", err.Error()))
 		return
 	}
-	if body.TotalLength <= 0 || len(body.DNAContents) <= 0 || len(body.DNAContents) > body.TotalLength {
-		appG.Response(http.StatusBadRequest, "failed", "TotalLength, DNA contents must be bigger than 0，and DNA contents < total length")
+	if body.TotalLength <= 0 || len(body.DNAContents) <= 0 || len(body.DNAContents) > body.TotalLength || len(body.Description) <= 0 {
+		appG.Response(http.StatusBadRequest, "failed", "TotalLength, DNA contents, Description must be bigger than 0，and DNA contents < total length")
 		return
 	}
 
 	SequenceHash := HashCalc(body.DNAContents)
+	vk, proof, err := Generate(body.DNAContents, SequenceHash)
 
 	var bodyBytes [][]byte
 	bodyBytes = append(bodyBytes, []byte(body.RealSequenceID))
@@ -44,6 +45,8 @@ func CreateRealSequence(c *gin.Context) {
 	bodyBytes = append(bodyBytes, []byte(strconv.Itoa(body.TotalLength)))
 	bodyBytes = append(bodyBytes, []byte(SequenceHash))
 	bodyBytes = append(bodyBytes, []byte(body.Description))
+	bodyBytes = append(bodyBytes, vk)
+	bodyBytes = append(bodyBytes, proof)
 
 	// invoke smart contract
 	resp, err := bc.ChannelExecute("createRealSequence", bodyBytes)
@@ -87,7 +90,6 @@ func QueryRealSequenceList(c *gin.Context) {
 	appG.Response(http.StatusOK, "success", data)
 }
 
-// 需要修改
 func ModifyRealSequenceList(c *gin.Context) {
 	appG := app.Gin{C: c}
 	body := new(RealSequenceQueryRequestBody)
@@ -100,18 +102,13 @@ func ModifyRealSequenceList(c *gin.Context) {
 	if body.Owner != "" {
 		bodyBytes = append(bodyBytes, []byte(body.Owner))
 	}
+
 	// invoke smart contract
-	resp, err := bc.ChannelQuery("queryRealSequenceList", bodyBytes)
+	_, err := bc.ChannelQuery("updateRealSequence", bodyBytes)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, "failed", err.Error())
 		return
 	}
 
-	// deserialize json
-	var data []map[string]interface{}
-	if err = json.Unmarshal(bytes.NewBuffer(resp.Payload).Bytes(), &data); err != nil {
-		appG.Response(http.StatusInternalServerError, "failed", err.Error())
-		return
-	}
-	appG.Response(http.StatusOK, "success", data)
+	appG.Response(http.StatusOK, "success", "update success!")
 }

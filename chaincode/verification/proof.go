@@ -5,12 +5,35 @@ import (
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/frontend"
+	"github.com/consensys/gnark/std/hash/mimc"
 )
 
-// VerifyProof verify the proof
-func VerifyProof(c frontend.Circuit, verifyKey, proofBytes []byte) (bool, error) {
+type Circuit struct {
+	// struct tag on a variable is optional
+	// default uses variable name and secret visibility.
+	PreImage frontend.Variable
+	Hash     frontend.Variable `gnark:",public"`
+}
 
-	publicWitness1, err := frontend.NewWitness(c, ecc.BN254, frontend.PublicOnly())
+// Define declares the circuit's constraints
+// Hash = mimc(PreImage)
+func (circuit *Circuit) Define(api frontend.API) error {
+	// hash function
+	mc, _ := mimc.NewMiMC(api)
+
+	// specify constraints
+	// mimc(preImage) == hash
+	mc.Write(circuit.PreImage)
+	api.AssertIsEqual(circuit.Hash, mc.Sum())
+
+	return nil
+}
+
+// VerifyProof verify the proof
+func VerifyProof(hash string, verifyKey, proofBytes []byte) (bool, error) {
+	assignment := Circuit{Hash: hash}
+
+	publicWitness1, err := frontend.NewWitness(&assignment, ecc.BN254, frontend.PublicOnly())
 	if err != nil {
 		return false, err
 	}

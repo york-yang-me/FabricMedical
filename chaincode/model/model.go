@@ -18,6 +18,7 @@ type RealSequence struct {
 	DNAContentsHash string `json:"dnaContents"`    // DNA hash value
 	Description     string `json:"description"`    // Information Description
 	VerifyKey       string `json:"verifyKey"`      // Verify key
+	Proof           string `json:"proof"`          // Proof
 }
 
 const (

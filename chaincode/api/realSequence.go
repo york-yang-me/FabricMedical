@@ -3,6 +3,8 @@ package api
 import (
 	"chaincode/model"
 	"chaincode/pkg/utils"
+	"chaincode/verification"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
@@ -20,7 +22,10 @@ func CreateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 	owner := args[1]
 	totalLength := args[2]
 	dnaContents := args[3]
-	if accountId == "" || owner == "" || totalLength == "" || dnaContents == "" {
+	description := args[4]
+	verifyKey := args[5]
+	proof := args[6]
+	if accountId == "" || owner == "" || totalLength == "" || dnaContents == "" || description == "" {
 		return shim.Error("parameters exist null")
 	}
 	if accountId == owner {
@@ -58,6 +63,9 @@ func CreateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Resp
 		Endorsement:     false,
 		TotalLength:     formattedTotalLength,
 		DNAContentsHash: formattedDNAContents,
+		Description:     description,
+		VerifyKey:       verifyKey,
+		Proof:           proof,
 	}
 	// write into ledger
 	if err := utils.WriteLedger(realSequence, stub, model.RealSequenceKey, []string{realSequence.Owner, realSequence.RealSequenceID}); err != nil {
@@ -94,4 +102,40 @@ func QueryRealSequenceList(stub shim.ChaincodeStubInterface, args []string) pb.R
 		return shim.Error(fmt.Sprintf("QueryRealSequenceList-serialization error: %s", err))
 	}
 	return shim.Success(realSequenceListByte)
+}
+
+// UpdateRealSequence
+// args[0] hash  args[1] description args[2] proof
+func UpdateRealSequence(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	results, err := utils.GetStateByPartialCompositeKeys2(stub, model.RealSequenceKey, args)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("%s", err))
+	}
+
+	for _, v := range results {
+		if v != nil {
+			var realSequence model.RealSequence
+			err := json.Unmarshal(v, &realSequence)
+			if err != nil {
+				return shim.Error(fmt.Sprintf("QueryRealSequenceList-deserialization error: %s", err))
+			}
+			if realSequence.DNAContentsHash == args[0] {
+				vk, _ := hex.DecodeString(realSequence.VerifyKey)
+				witness, _ := hex.DecodeString(args[2])
+				// verify if the user has dna sequence
+				result, err := verification.VerifyProof(realSequence.DNAContentsHash, vk, witness)
+				if err != nil || !result {
+					return shim.Error("verify fail")
+				}
+				realSequence.Description = args[1]
+				// write into ledger
+				if err := utils.WriteLedger(realSequence, stub, model.RealSequenceKey, []string{realSequence.Owner, realSequence.RealSequenceID}); err != nil {
+					return shim.Error(fmt.Sprintf("%s", err))
+				}
+				return shim.Success(nil)
+			}
+		}
+	}
+
+	return shim.Error(fmt.Sprintf("update failed: %s", err))
 }

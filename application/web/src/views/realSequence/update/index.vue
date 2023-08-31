@@ -38,7 +38,7 @@ import { queryAccountList } from '@/api/account'
 import { createRealSequence } from '@/api/realSequence'
 
 export default {
-  name: 'AddRealSequence',
+  name: 'UpdateRealSequence',
   data() {
     var checkLength = (rule, value, callback) => {
       if (value <= 0) {
@@ -73,7 +73,7 @@ export default {
       'accountId'
     ])
   },
-  created() {
+  updated() {
     queryAccountList().then(response => {
       if (response !== null) {
         // filter the admin
@@ -87,28 +87,29 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$confirm('Whether to create immediately?', 'tip', {
+          this.$confirm('Whether to update immediately?', 'tip', {
             confirmButtonText: 'confirm',
             cancelButtonText: 'cancel',
             type: 'success'
           }).then(() => {
             this.loading = true
-            createRealSequence({
+            updateRealSequence({
               realSequenceID: this.accountId,
               owner: this.ruleForm.owner,
               totalLength: this.ruleForm.totalLength,
-              dnaContents: this.ruleForm.dnaContents
+              dnaContents: this.ruleForm.dnaContents,
+              description: this.ruleForm.description,
             }).then(response => {
               this.loading = false
               if (response !== null) {
                 this.$message({
                   type: 'success',
-                  message: 'create success!'
+                  message: 'update success!'
                 })
               } else {
                 this.$message({
                   type: 'error',
-                  message: 'create failed!'
+                  message: 'update failed!'
                 })
               }
             }).catch(_ => {

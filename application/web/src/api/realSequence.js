@@ -18,3 +18,12 @@ export function queryRealSequenceList(data) {
     data
   })
 }
+
+// update dna information
+export function updateRealSequence(data) {
+  return request({
+    url: '/updateRealSequence',
+    method: 'post',
+    data
+  })
+}

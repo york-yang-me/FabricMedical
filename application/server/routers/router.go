@@ -17,6 +17,7 @@ func InitRouter() *gin.Engine {
 		apiV1.POST("/queryAccountList", v1.QueryAccountList)
 		apiV1.POST("/createRealSequence", v1.CreateRealSequence)
 		apiV1.POST("/queryRealSequenceList", v1.QueryRealSequenceList)
+		apiV1.POST("/updateRealSequence", v1.ModifyRealSequenceList)
 	}
 	// static files router
 	r.StaticFS("/web", http.Dir("./dist/"))

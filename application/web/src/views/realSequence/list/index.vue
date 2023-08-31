@@ -39,6 +39,10 @@
             <el-tag type="danger">dna contents: </el-tag>
             <span>{{ val.dnaContents }}</span>
           </div>
+          <div class="item">
+            <el-tag type="info">description: </el-tag>
+            <span>{{ val.description }}</span>
+          </div>
           <el-rate v-if="roles[0] === 'admin'" />
         </el-card>
       </el-col>
@@ -55,7 +59,7 @@ export default {
   data() {
     var checkArea = (rule, value, callback) => {
       if (value <= 0) {
-        callback(new Error('must be bigger than0'))
+        callback(new Error('must be bigger than 0'))
       } else {
         callback()
       }

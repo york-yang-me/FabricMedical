@@ -55,12 +55,8 @@ func (t *BlockChainRealSequence) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 		return api.CreateRealSequence(stub, args)
 	case "queryRealSequenceList":
 		return api.QueryRealSequenceList(stub, args)
-	case "createRealSequenceHash":
-		return api.CreateRealSequenceHash(stub, args)
 	case "updateRealSequence":
 		return api.UpdateRealSequence(stub, args)
-	case "querySequenceInfo":
-		return api.QuerySequenceInfo(stub, args)
 	default:
 		return shim.Error(fmt.Sprintf("no such function: %s", funcName))
 	}
