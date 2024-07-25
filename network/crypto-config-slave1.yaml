@@ -1,0 +1,25 @@
+# machine: slave-1-node
+# Define orderer node organizations
+OrdererOrgs:
+  - Name: GMP # name
+    Domain: gmp.com # domain
+    Specs: # node domain: orderer.gmp.com
+      - Hostname: orderer # domain name
+
+# Define peer node organizations
+PeerOrgs:
+  # Hospital-Organization
+  - Name: Hospital # name
+    Domain: hospital.com # domain
+    Template: # Define template  Count means the number of notes under this organization
+      Count: 2 # Note domain: peer0.hospital.com and peer1.hospital.com
+    Users: # users information in organization Count means the number of users excluding admin
+      Count: 1 # User: Admin + User1
+
+  # Patient-Organization
+  - Name: Patient
+    Domain: patient.com
+    Template:
+      Count: 2 # Note domain: peer0.patient.com + peer1.patient.com
+    Users:
+      Count: 1 # User: Admin + User1

@@ -9,13 +9,22 @@ services:
       - CORE_LOGGING_PEER=info
       - CORE_CHAINCODE_LOGGING_LEVEL=INFO
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp # msp certificate (note certificate)
-      - CORE_LEDGER_STATE_STATEDATABASE=goleveldb # stated database storage engine(or CouchDB)
-      #- CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      #- CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      #- CORE_LEDGER_STATE_STATEDATABASE=goleveldb # stated database storage engine(or CouchDB)
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=medical_network # docker network
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
+    networks:
+      - fabric_network
+  couchdb-base:
+    image: couchdb:3.2
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=adminpw
     networks:
       - fabric_network

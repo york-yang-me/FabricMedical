@@ -75,7 +75,7 @@ Capabilities:
 Orderer: &OrdererDefaults
   # Orderer type need to specify enabled orderer note
   # And different implementations correspond to different consensus algorithms
-  OrdererType: solo # temporary consensus algorithms for test (such as kafka, raft)
+  OrdererType: etcdraft # temporary consensus algorithms for test (such as kafka, raft)
   Addresses: # Orderer domain (For connection)
     - orderer.gmp.com:7050
   BatchTimeout: 2s # block time interval

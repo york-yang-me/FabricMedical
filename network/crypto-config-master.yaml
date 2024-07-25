@@ -1,3 +1,4 @@
+# machine: master-node
 # Define orderer node organizations
 OrdererOrgs:
   - Name: GMP # name
