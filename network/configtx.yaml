@@ -15,14 +15,16 @@ Organizations:
         Type: Signature
         Rule: "OR('GMPMSP.admin')"
     OrdererEndpoints:
-      - orderer.gmp.com:7050
+       - orderer.gmp.com.${fabric-medical}.k8s-master:7050
+       - orderer2.gmp.com.${fabric-medical}.k8s-node1:7050
+       - orderer3.gmp.com.${fabric-medical}.k8s-node2:7050
 
   - &Hospital
     Name: Hospital
     ID: HospitalMSP
     MSPDir: crypto-config/peerOrganizations/hospital.com/msp
     AnchorPeers: # organizations anchor peers configuration
-      - Host: peer0.hospital.com
+      - Host: peer0.hospital.com.${fabric-medical}.k8s-master
         Port: 7051
     Policies:
       Readers:
@@ -36,14 +38,14 @@ Organizations:
         Rule: "OR('HospitalMSP.admin')"
       Endorsement:
         Type: Signature
-        Rule: "OR('HospitalMSP.member', 'HospitalMSP.peer')"
+        Rule: "AND('HospitalMSP.peer', 'PatientMSP.peer')"
 
   - &Patient
     Name: Patient
     ID: PatientMSP
     MSPDir: crypto-config/peerOrganizations/patient.com/msp
     AnchorPeers: # organizations anchor peers configuration
-      - Host: peer0.patient.com
+      - Host: peer0.patient.com.${fabric-medical}.k8s-master
         Port: 7051
     Policies:
       Readers:
@@ -57,7 +59,7 @@ Organizations:
         Rule: "OR('PatientMSP.admin')"
       Endorsement:
         Type: Signature
-        Rule: "OR('PatientMSP.member', 'PatientMSP.peer')"
+        Rule: "AND('HospitalMSP.peer', 'PatientMSP.peer')"
 
 # Define the ability about notes with different version
 Capabilities:
@@ -77,7 +79,23 @@ Orderer: &OrdererDefaults
   # And different implementations correspond to different consensus algorithms
   OrdererType: etcdraft # temporary consensus algorithms for test (such as kafka, raft)
   Addresses: # Orderer domain (For connection)
-    - orderer.gmp.com:7050
+    - orderer.gmp.com.${fabric-medical}.k8s-master::7050
+    - orderer2.gmp.com.${fabric-medical}.k8s-node1::7050
+    - orderer3.gmp.com.${fabric-medical}.k8s-node2::7050
+  EtcdRaft:
+    Consenters:
+        - Host: orderer.gmp.com
+          Port: 7050
+          ClientTLSCert: crypto-config/ordererOrganizations/gmp.com/orderers/orderer.gmp.com/tls/server.crt
+          ServerTLSCert: crypto-config/ordererOrganizations/gmp.com/orderers/orderer.gmp.com/tls/server.crt
+        - Host: orderer2.gmp.com
+          Port: 7050
+          ClientTLSCert: crypto-config/ordererOrganizations/gmp.com/orderers/orderer2.gmp.com/tls/server.crt
+          ServerTLSCert: crypto-config/ordererOrganizations/gmp.com/orderers/orderer2.gmp.com/tls/server.crt
+        - Host: orderer3.gmp.com
+          Port: 7050
+          ClientTLSCert: crypto-config/ordererOrganizations/gmp.com/orderers/orderer3.gmp.com/tls/server.crt
+          ServerTLSCert: crypto-config/ordererOrganizations/gmp.com/orderers/orderer3.gmp.com/tls/server.crt
   BatchTimeout: 2s # block time interval
   BatchSize: # control every block size
     MaxMessageCount: 10 # message number for each block
