@@ -7,6 +7,10 @@
     "patient-network": {
       "name": "Patient Network",
       "profile": "./connection-profile/patient_network.json"
+    },
+    "citizen-network": {
+      "name": "Citizen Network",
+      "profile": "./connection-profile/citizen_network.json"
     }
   },
   "license": "Apache-2.0"
