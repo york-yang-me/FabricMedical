@@ -1,0 +1,57 @@
+{
+  "name": "Citizen-network",
+  "version": "1.0.0",
+  "client": {
+    "tlsEnable": true,
+    "adminCredential": {
+      "id": "admin",
+      "password": "123456"
+    },
+    "enableAuthentication": true,
+    "organization": "CitizenMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        },
+        "orderer": "300"
+      }
+    }
+  },
+  "channels": {
+    "appchannel": {
+      "peers": {
+        "peer0.citizen.com": {}
+      },
+      "connection": {
+        "timeout": {
+          "endorser": "6000",
+          "eventHub": "6000",
+          "eventReg": "6000"
+        }
+      }
+    }
+  },
+  "organizations": {
+    "CitizenMSP": {
+      "mspid": "CitizenMSP",
+      "adminPrivateKey": {
+        "path": "/tmp/crypto/peerOrganizations/citizen.com/users/Admin@citizen.com/msp/keystore/priv_sk"
+      },
+      "peers": [
+        "peer0.citizen.com"
+      ],
+      "signedCert": {
+        "path": "/tmp/crypto/peerOrganizations/citizen.com/users/Admin@citizen.com/msp/signcerts/Admin@citizen.com-cert.pem"
+      }
+    }
+  },
+  "peers": {
+    "peer0.citizen.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/citizen.com/peers/peer0.citizen.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer0.citizen.com:7051"
+    }
+  }
+}
