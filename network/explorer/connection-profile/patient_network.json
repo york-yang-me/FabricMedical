@@ -22,7 +22,11 @@
     "appchannel": {
       "peers": {
         "peer0.patient.com": {},
-        "peer1.patient.com": {}
+        "peer1.patient.com": {},
+        "peer2.patient.com": {},
+        "peer3.patient.com": {},
+        "peer4.patient.com": {},
+        "peer5.patient.com": {}
       },
       "connection": {
         "timeout": {
@@ -41,7 +45,12 @@
       },
       "peers": [
         "peer0.patient.com",
-        "peer1.patient.com"
+        "peer1.patient.com",
+        "peer2.patient.com",
+        "peer3.patient.com",
+        "peer4.patient.com",
+        "peer5.patient.com"
+
       ],
       "signedCert": {
         "path": "/tmp/crypto/peerOrganizations/patient.com/users/Admin@patient.com/msp/signcerts/Admin@patient.com-cert.pem"
@@ -60,6 +69,30 @@
         "path": "/tmp/crypto/peerOrganizations/patient.com/peers/peer1.patient.com/tls/ca.crt"
       },
       "url": "grpcs://peer1.patient.com:7051"
+    },
+    "peer2.patient.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/peers/peer2.patient.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer2.patient.com:7051"
+    },
+    "peer3.patient.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/peers/peer3.patient.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer3.patient.com:7051"
+    },
+    "peer4.patient.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/peers/peer4.patient.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer4.patient.com:7051"
+    },
+    "peer5.patient.com": {
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/patient.com/peers/peer5.patient.com/tls/ca.crt"
+      },
+      "url": "grpcs://peer5.patient.com:7051"
     }
   }
 }
