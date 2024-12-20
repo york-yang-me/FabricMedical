@@ -13,7 +13,7 @@ networks:
 services:
 
   explorerdb.com:
-    image: hyperledger/explorer-db:1.1.6
+    image: hyperledger/explorer-db:2.0.0
     container_name: explorerdb.com
     hostname: explorerdb.com
     environment:
@@ -31,7 +31,7 @@ services:
       - fabric_network
 
   explorer.com:
-    image: hyperledger/explorer:1.1.6
+    image: hyperledger/explorer:2.0.0
     container_name: explorer.com
     hostname: explorer.com
     environment:
