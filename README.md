@@ -10,19 +10,21 @@ Ps Docker install tutorial: [click it](Install.md)
 
 ## Deployment
 
-1. clone this project to any content, eg.`/usr/local/fabric-medical`
+1. clone this project to any content, eg.`/usr/local/go_project/fabric-medical` for each node server
 
-2. give the project permisson, execute `sudo chmod -R +x /usr/local/fabric-medical/`
+2. give the project permisson, execute `sudo chmod -R +x /usr/local/go_project/fabric-medical/`
 
-3. go into `network` content, execute `./start.sh` start blockchain network
+3. go into `network` content, execute `./connfigtx-start.sh` generate necessary cryptography files in **master node**, 
 
-4. go into `chaincode` content, execute `./sc-start.sh` deploy smart contract
+4. Then execute "./start.sh" start blockchain network
 
-5. go into `application` content, execute `./build.sh` compile image, then execute `./start.sh`
+5. go into `chaincode` content, execute `./sc-start.sh` deploy smart contract
+
+6. go into `application` content, execute `./build.sh` compile image, then execute `./start.sh`
    start the application, use explorer to access [http://localhost:8000/web](http://localhost:8000/web)
    If you can not run it successfully, please execute them before running `go mod tidy` to update packages into `application/server/`
 
-6. (optional) go into `network/explorer` content, execute `./start.sh` restart blockchain explorer, access [http://localhost:8080](http://localhost:8080), username: admin, password
+7. (optional) go into `network/explorer` content, execute `./start.sh` restart blockchain explorer, access [http://localhost:8080](http://localhost:8080), username: admin, password
    123456
 
 ## stop or restart

@@ -30,7 +30,7 @@ docker info
 Download Docker Compose
 
 ```shell
-curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
 
 Configure execution rights
@@ -39,8 +39,12 @@ Configure execution rights
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-Check if it's installed successfully
+Create soft link
 
+```shell
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+```
+Check if it's installed successfully
 ```shell
 docker-compose -v
 ```
