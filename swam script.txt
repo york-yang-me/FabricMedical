@@ -1,0 +1,30 @@
+docker swarm init --advertise-addr xx.198.194.60
+docker swarm join-token manager
+
+docker swarm join --token SWMTKN-1-5o7ydy17j8lk81urij2418s9b7dvnig1xov88f535zmczk5eiy-bbcrggpe8u0o9kk6xs95rqup0 xx.198.194.60:2377
+
+docker swarm join --token SWMTKN-1-12sbnmdjrd6rmf4cx51e396z0dh60dtsjs6xlo94ffl0lu6r5k-1zsrogrzn8fbydawp5t5xgbth xx.198.194.60:2377 --advertise-addr xx.249.21.210
+
+docker swarm join --token SWMTKN-1-12sbnmdjrd6rmf4cx51e396z0dh60dtsjs6xlo94ffl0lu6r5k-1zsrogrzn8fbydawp5t5xgbth xx.198.194.60:2377 --advertise-addr xx.182.197.170
+
+docker network create --attachable --driver overlay fabric-medical-swarm
+
+
+- orderer.gmp.com:xxx.31.34.249
+      - orderer2.gmp.com:xxx.31.37.96
+      - orderer3.gmp.com:xxx.31.47.59
+      - peer0.hospital.com:xxx.31.34.249
+      - peer1.hospital.com:xxx.31.34.249
+      - peer2.hospital.com:xxx.31.37.96
+      - peer3.hospital.com:xxx.31.37.96
+      - peer4.hospital.com:xxx.31.47.59
+      - peer5.hospital.com:xxx.31.47.59
+      - peer0.patient.com:xxx.31.34.249
+      - peer1.patient.com:xxx.31.34.249
+      - peer2.patient.com:xxx.31.37.96
+      - peer3.patient.com:xxx.31.37.96
+      - peer4.patient.com:xxx.31.47.59
+      - peer5.patient.com:xxx.31.47.59
+
+
+peer channel join -b appchannel.block CORE_PEER_ADDRESS=peer2.hospital.com:7051 CORE_PEER_LOCALMSPID=HospitalMSP CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/hospital.com/users/Admin@hospital.com/msp CORE_PEER_TLS_ENABLED=true CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peer/hospital.com/peers/peer2.hospital.com/tls/server.crt CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peer/hospital.com/peers/peer2.hospital.com/tls/server.key CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peer/hospital.com/peers/peer2.hospital.com/tls/ca.crt
