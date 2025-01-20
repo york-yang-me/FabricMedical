@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ `uname` == 'Linux' ]]; then
     echo "Linux"
-    export PATH=/usr/local/bin:$PATH
+    export PATH=/usr/local/hyperledger-fabric-linux-amd64-2.4.2:$PATH
 fi
 
 echo "1、clean the environment"
