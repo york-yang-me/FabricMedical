@@ -3,8 +3,8 @@
 OrdererOrgs:
   - Name: GMP # name
     Domain: gmp.com # domain
-    Specs: # node domain: orderer.gmp.com
-      - Hostname: orderer # domain name
+    Specs: # node domain: orderer3.gmp.com
+      - Hostname: orderer3 # domain name
 
 # Define peer node organizations
 PeerOrgs:
