@@ -16,7 +16,7 @@ services:
   couchdb0:
     container_name: couchdb0
     extends:
-      file: docker-base.yaml
+      file: docker-compose-base.yaml
       service: couchdb-base
     ports:
       - "7355:5984"
